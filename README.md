@@ -44,7 +44,7 @@ Examples:
 1. you can install this into cargo bin path:
 
 ```
-cargo install aki-xcat
+cargo install aki-xtree
 ```
 
 2. you can build debian package:
