@@ -1,0 +1,5 @@
+Options:
+  -a, --append   append to the <file>, do not overwrite [unimplemented]
+
+  -H, --help     display this help and exit
+  -V, --version  display version information and exit

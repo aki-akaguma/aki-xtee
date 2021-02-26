@@ -1,0 +1,59 @@
+[package]
+name = "aki-xtee"
+version = "0.1.0"
+authors = ["aki <aki.akaguma@hotmail.com>"]
+description = """
+copy standard input to each files and standard output.
+"""
+keywords = ["text", "filter"]
+categories = ["command-line-utilities", "text-processing"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+build = "build.rs"
+edition = "2018"
+repository = "https://github.com/aki-akaguma/aki-xcat"
+
+[lib]
+name = "libaki_xtee"
+path = "src/lib.rs"
+crate-type = ["lib"]
+
+[[bin]]
+name = "aki-xtee"
+path = "src/main.rs"
+
+[features]
+default = ["flate2", "xz2", "zstd"]
+
+[dependencies]
+anyhow = "1.0"
+flood-tide = { version="0.1", default-features=true, features=["stop_at_mm"] }
+runnel = "0.3"
+#runnel = { path="../../lib/runnel" }
+
+flate2 = { version = "=1.0.20", features = ["rust_backend"], default-features = false, optional = true }
+xz2 = { version = "0.1", optional = true }
+zstd = { version = "0.6", optional = true }
+
+[dev-dependencies]
+
+[build-dependencies]
+rustc_version = "=0.2.3"
+
+[workspace]
+members = [
+    "xtask",
+]
+
+[package.metadata.deb]
+features = []
+section = "AAA-text"
+priority = "optional"
+maintainer = "aki <aki.akaguma@hotmail.com>"
+extended-description = """\
+copy standard input to each files and standard output.
+"""
+depends = "$auto"
+assets = [
+    ["target/release/aki-xtee", "usr/bin/", "755"],
+]
