@@ -1,7 +1,7 @@
 use crate::conf::CmdOptConf;
-use crate::util::open_files;
 use crate::util::compress::Finish;
 use crate::util::err::BrokenPipeError;
+use crate::util::open_files;
 use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 

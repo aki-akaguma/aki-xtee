@@ -11,10 +11,11 @@ macro_rules! help_msg {
             "automatic discovery file type: plain, gz, xz and zst.\n",
             "\n",
             "Options:\n",
-            "  -a, --append   append to the <file>, do not overwrite [unimplemented]\n",
+            "  -a, --append <file>   append to the <file>, do not overwrite [unimplemented]\n",
+            "  -p, --pipe-out <num>  write to pipe <num> [unimplemented]\n",
             "\n",
-            "  -H, --help     display this help and exit\n",
-            "  -V, --version  display version information and exit\n",
+            "  -H, --help        display this help and exit\n",
+            "  -V, --version     display version information and exit\n",
             "\n",
             "Argument:\n",
             "  <file>         utf-8 encoded plain text file,\n",
@@ -23,8 +24,8 @@ macro_rules! help_msg {
             "                 zstd compressed file at the end with '.zst'.\n",
             "\n",
             "Examples:\n",
-            "  You can simple use. Just arrange the files.\n",
-            "    aki-xtee file1 file2.gz file3.xz file4.zst\n",
+            "  You can simple use. Just arrange the files:\n",
+            "    cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst\n",
             "\n",
         )
     };
@@ -213,12 +214,15 @@ mod test_2_s {
     #[cfg(feature = "zstd")]
     #[test]
     fn test_plain_gz_xz() {
-        let (r, sioe) = do_execute!(&[
-            "target/out_s021/out.plain.txt",
-            "target/out_s021/out.text.gz",
-            "target/out_s021/out.text.xz",
-            "target/out_s021/out.text.zst",
-            ], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!(
+            &[
+                "target/out_s021/out.plain.txt",
+                "target/out_s021/out.text.gz",
+                "target/out_s021/out.text.xz",
+                "target/out_s021/out.text.zst",
+            ],
+            "ABCDEFG\nHIJKLMN\n"
+        );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert_eq!(r.is_ok(), true);

@@ -1,5 +1,6 @@
 Options:
-  -a, --append   append to the <file>, do not overwrite [unimplemented]
+  -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+  -p, --pipe-out <num>  write to pipe <num> [unimplemented]
 
-  -H, --help     display this help and exit
-  -V, --version  display version information and exit
+  -H, --help        display this help and exit
+  -V, --version     display version information and exit

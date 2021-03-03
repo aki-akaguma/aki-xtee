@@ -21,8 +21,8 @@ const ARGUMENTS_TEXT: &str = r#"Argument:
 "#;
 
 const EXAMPLES_TEXT: &str = r#"Examples:
-  You can simple use. Just arrange the files.
-    aki-xtee file1 file2.gz file3.xz file4.zst
+  You can simple use. Just arrange the files:
+    cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
 "#;
 //}}} TEXT
 

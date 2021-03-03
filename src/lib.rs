@@ -10,10 +10,11 @@
 //! automatic discovery file type: plain, gz, xz and zst.
 //!
 //! Options:
-//!   -a, --append   append to the <file>, do not overwrite [unimplemented]
+//!   -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+//!   -p, --pipe-out <num>  write to pipe <num> [unimplemented]
 //!
-//!   -H, --help     display this help and exit
-//!   -V, --version  display version information and exit
+//!   -H, --help        display this help and exit
+//!   -V, --version     display version information and exit
 //!
 //! Argument:
 //!   <file>         utf-8 encoded plain text file,
@@ -22,8 +23,8 @@
 //!                  zstd compressed file at the end with '.zst'.
 //!
 //! Examples:
-//!   You can simple use. Just arrange the files.
-//!     aki-xtee file1 file2.gz file3.xz file4.zst
+//!   You can simple use. Just arrange the files:
+//!     cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
 //! ```
 //!
 //! # Examples
