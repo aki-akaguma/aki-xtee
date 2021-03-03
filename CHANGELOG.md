@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.2 (2021-03-03)
+=====
+
+* fix github repository name: from aki-xtree to aki-xtee
+* update crate: runnel
+
 0.1.1 (2021-03-03)
 =====
 

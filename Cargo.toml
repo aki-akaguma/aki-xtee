@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -11,7 +11,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 build = "build.rs"
 edition = "2018"
-repository = "https://github.com/aki-akaguma/aki-xtree"
+repository = "https://github.com/aki-akaguma/aki-xtee"
 
 [lib]
 name = "libaki_xtee"
