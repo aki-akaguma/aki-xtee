@@ -2,6 +2,11 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.4 (2021-03-08)
+=====
+
+* rename file: xtask/src/cmd.txt to xtask/src/aki-xtee-cmd.txt
+
 0.1.3 (2021-03-07)
 =====
 
