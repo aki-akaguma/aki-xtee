@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -37,7 +37,7 @@ zstd = { version = "0.6", optional = true }
 [dev-dependencies]
 
 [build-dependencies]
-rustc_version = "=0.2.3"
+rustc_version = "0.3"
 
 [workspace]
 members = [
