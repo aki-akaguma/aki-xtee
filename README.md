@@ -108,3 +108,7 @@ aki-xtee out/plain.txt out/gztext.txt.gz out/xztext.txt.xz  out/zstext.txt.zst
 See [`fn execute()`] for this library examples.
 
 [`fn execute()`]: crate::execute
+
+## Changelogs
+
+[This crate's changelog here.](https://github.com/aki-akaguma/aki-xtee/blob/main/CHANGELOG.md)
