@@ -1,6 +1,11 @@
-TBD
+aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
+
+0.1.6 (2021-03-22)
+=====
+
+* update depends: anyhow
 
 0.1.5 (2021-03-08)
 =====
