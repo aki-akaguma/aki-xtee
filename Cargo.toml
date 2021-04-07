@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -27,12 +27,12 @@ default = ["flate2", "xz2", "zstd"]
 
 [dependencies]
 anyhow = "1.0"
-flood-tide = { version="0.1", default-features=true, features=["stop_at_mm"] }
+flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
 runnel = "0.3"
 
 flate2 = { version = "=1.0.20", features = ["rust_backend"], default-features = false, optional = true }
 xz2 = { version = "0.1", optional = true }
-zstd = { version = "0.6", optional = true }
+zstd = { version = "0.7", optional = true }
 
 [dev-dependencies]
 
