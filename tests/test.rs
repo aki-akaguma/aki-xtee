@@ -18,6 +18,7 @@ macro_rules! help_msg {
             "\n",
             "  -H, --help        display this help and exit\n",
             "  -V, --version     display version information and exit\n",
+            "  -X <x-options>    x options. try -X help\n",
             "\n",
             "Argument:\n",
             "  <file>         utf-8 encoded plain text file,\n",

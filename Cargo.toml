@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -37,6 +37,7 @@ zstd = { version = "0.7", optional = true }
 [dev-dependencies]
 
 [build-dependencies]
+rust-version-info-file = "0.1"
 rustc_version = "0.3"
 
 [workspace]
@@ -53,6 +54,9 @@ extended-description = """\
 copy standard input to each files and standard output.
 """
 depends = "$auto"
+separate-debug-symbols = true
 assets = [
     ["target/release/aki-xtee", "usr/bin/", "755"],
+    ["target/rust-version-info.txt", "usr/share/doc/aki-xtee/", "644"],
+    ["README.md", "usr/share/doc/aki-xtee/", "644"],
 ]
