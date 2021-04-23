@@ -2,6 +2,11 @@ aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.10 (2021-04-23)
+=====
+
+* fix build.rs
+
 0.1.9 (2021-04-23)
 =====
 
