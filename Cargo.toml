@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.10"
+version = "0.1.11"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -24,6 +24,7 @@ path = "src/main.rs"
 
 [features]
 default = ["flate2", "xz2", "zstd"]
+debian_build = []
 
 [dependencies]
 anyhow = "1.0"
@@ -46,7 +47,7 @@ members = [
 ]
 
 [package.metadata.deb]
-features = []
+features = ["debian_build"]
 section = "AAA-text"
 priority = "optional"
 maintainer = "aki <aki.akaguma@hotmail.com>"
