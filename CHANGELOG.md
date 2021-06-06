@@ -2,6 +2,11 @@ aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.12 (2021-06-06)
+=====
+
+* update depends: zstd(0.8.3+zstd.1.5.0)
+
 0.1.11 (2021-06-03)
 =====
 

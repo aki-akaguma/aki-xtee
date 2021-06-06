@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.11"
+version = "0.1.12"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -33,7 +33,7 @@ runnel = "0.3"
 
 flate2 = { version = "=1.0.20", features = ["rust_backend"], default-features = false, optional = true }
 xz2 = { version = "0.1", optional = true }
-zstd = { version = "0.7", optional = true }
+zstd = { version = "0.8", optional = true }
 
 [dev-dependencies]
 
