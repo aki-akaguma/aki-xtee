@@ -2,6 +2,14 @@ aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.13 (2021-06-24)
+=====
+
+* add `memx_cdy::memx_init(); // fast mem operation.`
+* rewite TARGET_EXE_PATH with `env!("CARGO_BIN_EXE_aki-xtree")`
+* bug fix: `#[cfg(feature = "debian_build")]`
+* update depends: zstd(0.9.0+zstd.1.5.0)
+
 0.1.12 (2021-06-06)
 =====
 
