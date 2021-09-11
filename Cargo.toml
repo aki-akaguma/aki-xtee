@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.13"
+version = "0.1.14"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -37,6 +37,8 @@ xz2 = { version = "0.1", optional = true }
 zstd = { version = "0.9", optional = true }
 
 [dev-dependencies]
+indoc = "1.0"
+exec-target = "0.2"
 
 [build-dependencies]
 rust-version-info-file = "0.1"

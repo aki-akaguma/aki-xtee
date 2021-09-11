@@ -3,30 +3,34 @@ macro_rules! help_msg {
         concat!(
             version_msg!(),
             "\n",
-            "Usage:\n",
-            "  aki-xtee [options] [<file>...]\n",
-            "\n",
-            "this is like the linux command `tee`.\n",
-            "copy standard input to each <file>, and to standard output.\n",
-            "automatic discovery file type: plain, gz, xz and zst.\n",
-            "\n",
-            "Options:\n",
-            "  -a, --append <file>   append to the <file>, do not overwrite [unimplemented]\n",
-            "  -p, --pipe-out <num>  write to pipe <num> [unimplemented]\n",
-            "\n",
-            "  -H, --help        display this help and exit\n",
-            "  -V, --version     display version information and exit\n",
-            "  -X <x-options>    x options. try -X help\n",
-            "\n",
-            "Argument:\n",
-            "  <file>         utf-8 encoded plain text file,\n",
-            "                 gzip compressed file at the end with '.gz',\n",
-            "                 xz2 compressed file at the end with '.xz',\n",
-            "                 zstd compressed file at the end with '.zst'.\n",
-            "\n",
-            "Examples:\n",
-            "  You can simple use. Just arrange the files:\n",
-            "    cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst\n",
+            indoc::indoc!(
+                r#"
+            Usage:
+              aki-xtee [options] [<file>...]
+
+            this is like the linux command `tee`.
+            copy standard input to each <file>, and to standard output.
+            automatic discovery file type: plain, gz, xz and zst.
+
+            Options:
+              -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+              -p, --pipe-out <num>  write to pipe <num> [unimplemented]
+
+              -H, --help        display this help and exit
+              -V, --version     display version information and exit
+              -X <x-options>    x options. try -X help
+
+            Argument:
+              <file>         utf-8 encoded plain text file,
+                             gzip compressed file at the end with '.gz',
+                             xz2 compressed file at the end with '.xz',
+                             zstd compressed file at the end with '.zst'.
+
+            Examples:
+              You can simple use. Just arrange the files:
+                cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
+            "#
+            ),
             "\n",
         )
     };

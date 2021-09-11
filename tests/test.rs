@@ -1,34 +1,38 @@
-const TARGET_EXE_PATH: &'static str = env!("CARGO_BIN_EXE_aki-xtee");
+const TARGET_EXE_PATH: &'static str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
 macro_rules! help_msg {
     () => {
         concat!(
             version_msg!(),
             "\n",
-            "Usage:\n",
-            "  aki-xtee [options] [<file>...]\n",
-            "\n",
-            "this is like the linux command `tee`.\n",
-            "copy standard input to each <file>, and to standard output.\n",
-            "automatic discovery file type: plain, gz, xz and zst.\n",
-            "\n",
-            "Options:\n",
-            "  -a, --append <file>   append to the <file>, do not overwrite [unimplemented]\n",
-            "  -p, --pipe-out <num>  write to pipe <num> [unimplemented]\n",
-            "\n",
-            "  -H, --help        display this help and exit\n",
-            "  -V, --version     display version information and exit\n",
-            "  -X <x-options>    x options. try -X help\n",
-            "\n",
-            "Argument:\n",
-            "  <file>         utf-8 encoded plain text file,\n",
-            "                 gzip compressed file at the end with '.gz',\n",
-            "                 xz2 compressed file at the end with '.xz',\n",
-            "                 zstd compressed file at the end with '.zst'.\n",
-            "\n",
-            "Examples:\n",
-            "  You can simple use. Just arrange the files:\n",
-            "    cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst\n",
+            indoc::indoc!(
+                r#"
+            Usage:
+              aki-xtee [options] [<file>...]
+
+            this is like the linux command `tee`.
+            copy standard input to each <file>, and to standard output.
+            automatic discovery file type: plain, gz, xz and zst.
+
+            Options:
+              -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+              -p, --pipe-out <num>  write to pipe <num> [unimplemented]
+
+              -H, --help        display this help and exit
+              -V, --version     display version information and exit
+              -X <x-options>    x options. try -X help
+
+            Argument:
+              <file>         utf-8 encoded plain text file,
+                             gzip compressed file at the end with '.gz',
+                             xz2 compressed file at the end with '.xz',
+                             zstd compressed file at the end with '.zst'.
+
+            Examples:
+              You can simple use. Just arrange the files:
+                cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
+            "#
+            ),
             "\n",
         )
     };
@@ -65,10 +69,10 @@ macro_rules! fixture_invalid_utf8 {
 
 #[macro_use]
 mod helper2;
-mod helper;
+//mod helper;
 
 mod test_0 {
-    use crate::helper::exec_target;
+    use exec_target::exec_target;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
@@ -118,7 +122,7 @@ mod test_0 {
 }
 
 mod test_1 {
-    use crate::helper::exec_target_with_in;
+    use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
 
     //
@@ -132,8 +136,8 @@ mod test_1 {
 }
 
 mod test_2 {
-    use crate::helper::exec_target_with_in;
     use crate::helper2::cmp_file;
+    use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -232,7 +236,7 @@ mod test_2 {
 }
 
 mod test_3 {
-    use crate::helper::exec_target;
+    use exec_target::exec_target;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
     //
     #[test]
