@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.14"
+version = "0.1.15"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
@@ -32,7 +32,7 @@ flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
 runnel = "0.3"
 memx-cdy = "0.1"
 
-flate2 = { version = "=1.0.20", features = ["rust_backend"], default-features = false, optional = true }
+flate2 = { version = "1.0", features = ["rust_backend"], default-features = false, optional = true }
 xz2 = { version = "0.1", optional = true }
 zstd = { version = "0.9", optional = true }
 
