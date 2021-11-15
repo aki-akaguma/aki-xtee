@@ -2,6 +2,11 @@ aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.17 (2021-11-15)
+=====
+
+* minimum support rustc 1.51.0 (2fd73fabe 2021-03-23)
+
 0.1.16 (2021-11-15)
 =====
 
