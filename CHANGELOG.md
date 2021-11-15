@@ -2,6 +2,11 @@ aki-xtee TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.18 (2021-11-15)
+=====
+
+* add more documents
+
 0.1.17 (2021-11-15)
 =====
 

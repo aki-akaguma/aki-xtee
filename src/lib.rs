@@ -39,6 +39,22 @@ Examples:
     cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
 ```
 
+# Quick install
+
+1. you can install this into cargo bin path:
+
+```text
+cargo install aki-xtee
+```
+
+2. you can build debian package:
+
+```text
+cargo deb
+```
+
+and install **.deb** into your local repository of debian package.
+
 # Examples
 
 ## Command line example 1
