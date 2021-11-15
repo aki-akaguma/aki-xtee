@@ -1,14 +1,16 @@
 # aki-xtee
 
-*aki-xtee* is the program that copy standard input to each files and standard output.
+copy standard input to each files and standard output.
 
-## Features
+## Feature
 
-*aki-xtee*  copy standard input to each files and standard output.
+- copy standard input to each files and standard output.
+- output files are compressed by auto with filename extension.
+- minimum support rustc 1.51.0 (2fd73fabe 2021-03-23)
 
-* command help
+## Command Help
 
-```text
+```
 aki-xtee --help
 ```
 
@@ -38,27 +40,9 @@ Examples:
     cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
 ```
 
-* minimum support rustc 1.38.0
-
-## Quick install
-
-1. you can install this into cargo bin path:
-
-```
-cargo install aki-xtree
-```
-
-2. you can build debian package:
-
-```
-cargo deb
-```
-
-and install **.deb** into your local repository of debian package.
-
 ## Examples
 
-#### Command line example 1
+### Command line example 1
 
 output "ABCDEFGH" to standard output and plain text file.
 ```
@@ -96,19 +80,31 @@ result output :
 ABCDEFGH
 ```
 
-#### Command line example 2
+### Command line example 2
 
 copy input to plain text file, gzip text file, xz text file and zstd text file.
 ```
 aki-xtee out/plain.txt out/gztext.txt.gz out/xztext.txt.xz  out/zstext.txt.zst
 ```
 
-#### Library example
+### Library example
 
 See [`fn execute()`] for this library examples.
 
 [`fn execute()`]: crate::execute
 
-## Changelogs
+
+# Changelogs
 
 [This crate's changelog here.](https://github.com/aki-akaguma/aki-xtee/blob/main/CHANGELOG.md)
+
+# License
+
+This project is licensed under either of
+
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
+   https://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or
+   https://opensource.org/licenses/MIT)
+
+at your option.
