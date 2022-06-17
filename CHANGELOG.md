@@ -1,6 +1,17 @@
-aki-xtee TBD
+TBD: aki-xtee
 ===
 Unreleased changes. Release notes have not yet been written.
+
+0.1.21 (2022-06-18)
+=====
+
+* changes to edition 2021
+* update depends: cfg-iif(0.2.3), flood-tide(0.2.5), linux-procfs(0.3.11)
+* update depends: memx(0.1.21), memx-cdy(0.1.8), naive_opt(0.1.18), runnel(0.3.11)
+* update depends: assert-text(0.2.6), exec-target(v0.2.6), flood-tide-gen(0.1.16)
+* update depends: rust-version-info-file(v0.1.6)
+* update depends: semver(1.0.10)
+* update depends: flate2(1.0.24), lzma-sys(0.1.19), miniz_oxide(0.5.3), xz2(0.1.7)
 
 0.1.20 (2022-05-22)
 =====
