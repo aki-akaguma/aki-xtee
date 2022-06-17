@@ -2,6 +2,11 @@ TBD: aki-xtee
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.22 (2022-06-18)
+=====
+
+* fix README.md
+
 0.1.21 (2022-06-18)
 =====
 

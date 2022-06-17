@@ -1,6 +1,6 @@
 [package]
 name = "aki-xtee"
-version = "0.1.21"
+version = "0.1.22"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 copy standard input to each files and standard output.
