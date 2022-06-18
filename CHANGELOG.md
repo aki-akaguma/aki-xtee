@@ -2,6 +2,11 @@ TBD: aki-xtee
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.23 (2022-06-18)
+=====
+
+* fix git log
+
 0.1.22 (2022-06-18)
 =====
 
