@@ -34,7 +34,7 @@ memx-cdy = "0.1"
 
 flate2 = { version = "1.0", features = ["rust_backend"], default-features = false, optional = true }
 xz2 = { version = "0.1", optional = true }
-zstd = { version = "0.11", optional = true }
+zstd = { version = "0.12", optional = true }
 
 [dev-dependencies]
 indoc = "1.0"
