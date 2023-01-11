@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update depends: zstd(0.12.1+zstd.1.5.2)
 
 ### Fixed
-* fix clippy: you are deriving `PartialEq` and can implement `Eq`
+* clippy: you are deriving `PartialEq` and can implement `Eq`
+* clippy: uninlined_format_args
 
 
 ## [0.1.23] (2022-06-18)

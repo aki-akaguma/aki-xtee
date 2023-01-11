@@ -39,7 +39,7 @@ pub fn open_files(paths: &[String]) -> anyhow::Result<Vec<NameWrite>> {
         }
         //
         let file =
-            File::create(path).with_context(|| format!("can not create file: {}", path_string))?;
+            File::create(path).with_context(|| format!("can not create file: {path_string}"))?;
         let w: Box<dyn Finish> = if path_string.ends_with(".gz") {
             let enc = GzEnc::new(file)?;
             Box::new(enc)

@@ -23,11 +23,11 @@ fn run_0(sioe: &RunnelIoe, files: &[String]) -> anyhow::Result<()> {
         //let line_len: usize = line_ss.len();
         //
         for file in file_vec.iter_mut() {
-            file.write_fmt(format_args!("{}\n", line_ss))?;
+            file.write_fmt(format_args!("{line_ss}\n"))?;
         }
         //
         #[rustfmt::skip]
-        sioe.pout().lock().write_fmt(format_args!("{}\n", line_ss))?;
+        sioe.pout().lock().write_fmt(format_args!("{line_ss}\n"))?;
     }
     //
     sioe.pout().lock().flush()?;
