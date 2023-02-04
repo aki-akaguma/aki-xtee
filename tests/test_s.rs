@@ -76,7 +76,9 @@ macro_rules! do_execute {
     ($args:expr, $sin:expr) => {{
         let sioe = RunnelIoe::new(
             Box::new(StringIn::with_str($sin)),
+            #[allow(clippy::box_default)]
             Box::new(StringOut::default()),
+            #[allow(clippy::box_default)]
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
@@ -115,28 +117,28 @@ mod test_0_s {
         let (r, sioe) = do_execute!(&["-H"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_help_long() {
         let (r, sioe) = do_execute!(&["--help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version() {
         let (r, sioe) = do_execute!(&["-V"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version_long() {
         let (r, sioe) = do_execute!(&["--version"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_invalid_opt() {
@@ -151,7 +153,7 @@ mod test_0_s {
             )
         );
         assert_eq!(buff!(sioe, sout), "");
-        assert_eq!(r.is_err(), true);
+        assert!(r.is_err());
     }
 }
 
@@ -166,7 +168,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&[] as &[&str], "abcdefg\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcdefg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 
@@ -182,7 +184,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&["target/out_s020/out.plain.txt"], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
         assert_file_eq!("target/out_s020/", "fixtures/", "out.plain.txt");
     }
     //
@@ -191,7 +193,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&["target/out_s020/out.text.gz"], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
         assert_file_eq!("target/out_s020/", "fixtures/", "out.text.gz");
     }
     //
@@ -201,7 +203,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&["target/out_s020/out.text.xz"], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
         assert_file_eq!("target/out_s020/", "fixtures/", "out.text.xz");
     }
     //
@@ -211,7 +213,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&["target/out_s020/out.text.zst"], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
         assert_file_eq!("target/out_s020/", "fixtures/", "out.text.zst");
     }
     //
@@ -230,7 +232,7 @@ mod test_2_s {
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
         assert_file_eq!("target/out_s021/", "fixtures/", "out.plain.txt");
         assert_file_eq!("target/out_s021/", "fixtures/", "out.text.gz");
         assert_file_eq!("target/out_s021/", "fixtures/", "out.text.xz");
@@ -256,7 +258,7 @@ mod test_2_s {
             )
         );
         assert_eq!(buff!(sioe, sout), "");
-        assert_eq!(r.is_ok(), false);
+        assert!(r.is_err());
     }
     */
 }

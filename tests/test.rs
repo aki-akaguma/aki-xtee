@@ -1,4 +1,4 @@
-const TARGET_EXE_PATH: &'static str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
+const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
 macro_rules! help_msg {
     () => {
@@ -74,39 +74,39 @@ mod helper2;
 mod test_0 {
     use exec_target::exec_target;
     //use exec_target::args_from;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_help() {
-        let oup = exec_target(TARGET_EXE_PATH, &["-H"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-H"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_help_long() {
-        let oup = exec_target(TARGET_EXE_PATH, &["--help"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--help"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, help_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_version() {
-        let oup = exec_target(TARGET_EXE_PATH, &["-V"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-V"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_version_long() {
-        let oup = exec_target(TARGET_EXE_PATH, &["--version"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["--version"]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, version_msg!());
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
     #[test]
     fn test_invalid_opt() {
-        let oup = exec_target(TARGET_EXE_PATH, &["-z"]);
+        let oup = exec_target(TARGET_EXE_PATH, ["-z"]);
         assert_eq!(
             oup.stderr,
             concat!(
@@ -117,13 +117,13 @@ mod test_0 {
             )
         );
         assert_eq!(oup.stdout, "");
-        assert_eq!(oup.status.success(), false);
+        assert!(!oup.status.success());
     }
 }
 
 mod test_1 {
     use exec_target::exec_target_with_in;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
 
     //
     #[test]
@@ -131,25 +131,25 @@ mod test_1 {
         let oup = exec_target_with_in(TARGET_EXE_PATH, &[] as &[&str], b"abcdefg\n" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcdefg\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
 
 mod test_2 {
     use crate::helper2::cmp_file;
     use exec_target::exec_target_with_in;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_plain() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["target/out020/out.plain.txt"],
+            ["target/out020/out.plain.txt"],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
         assert_file_eq!("target/out020/", "fixtures/", "out.plain.txt");
     }
     //
@@ -157,12 +157,12 @@ mod test_2 {
     fn test_gz() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["target/out020/out.text.gz"],
+            ["target/out020/out.text.gz"],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
         assert_file_eq!("target/out020/", "fixtures/", "out.text.gz");
     }
     //
@@ -171,12 +171,12 @@ mod test_2 {
     fn test_xz() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["target/out020/out.text.xz"],
+            ["target/out020/out.text.xz"],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
         assert_file_eq!("target/out020/", "fixtures/", "out.text.xz");
     }
     #[cfg(feature = "zstd")]
@@ -184,12 +184,12 @@ mod test_2 {
     fn test_zstd() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &["target/out020/out.text.zst"],
+            ["target/out020/out.text.zst"],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
         assert_file_eq!("target/out020/", "fixtures/", "out.text.zst");
     }
     //
@@ -199,7 +199,7 @@ mod test_2 {
     fn test_plain_gz_xz() {
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            &[
+            [
                 "target/out021/out.plain.txt",
                 "target/out021/out.text.gz",
                 "target/out021/out.text.xz",
@@ -209,7 +209,7 @@ mod test_2 {
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
         assert_file_eq!("target/out021/", "fixtures/", "out.plain.txt");
         assert_file_eq!("target/out021/", "fixtures/", "out.text.gz");
         assert_file_eq!("target/out021/", "fixtures/", "out.text.xz");
@@ -231,13 +231,13 @@ mod test_2 {
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
         );
         assert_eq!(oup.stdout, "");
-        assert_eq!(oup.status.success(), false);
+        assert!(!oup.status.success());
     }
 }
 
 mod test_3 {
     use exec_target::exec_target;
-    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_output_broken_pipe() {
@@ -246,9 +246,9 @@ mod test_3 {
             fixture_text10k!(),
             TARGET_EXE_PATH,
         );
-        let oup = exec_target("sh", &["-c", &cmdstr]);
+        let oup = exec_target("sh", ["-c", &cmdstr]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
-        assert_eq!(oup.status.success(), true);
+        assert!(oup.status.success());
     }
 }
