@@ -173,7 +173,7 @@ mod test_1_s {
 }
 
 mod test_2_s {
-    use crate::helper2::cmp_file;
+    use crate::helper2::{cmp_file, cmp_text_file};
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -185,7 +185,7 @@ mod test_2_s {
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.plain.txt");
+        assert_text_file_eq!("target/out_s020/", "fixtures/", "out.plain.txt");
     }
     //
     #[test]
@@ -233,7 +233,7 @@ mod test_2_s {
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.plain.txt");
+        assert_text_file_eq!("target/out_s021/", "fixtures/", "out.plain.txt");
         assert_file_eq!("target/out_s021/", "fixtures/", "out.text.gz");
         assert_file_eq!("target/out_s021/", "fixtures/", "out.text.xz");
         assert_file_eq!("target/out_s021/", "fixtures/", "out.text.zst");

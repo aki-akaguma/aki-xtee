@@ -22,9 +22,11 @@ name = "aki-xtee"
 version = "0.1.24"
 dependencies = [
  "anyhow",
+ "assert-text",
  "exec-target",
  "flate2",
  "flood-tide",
+ "hex",
  "indoc",
  "memx-cdy",
  "runnel",
@@ -39,6 +41,16 @@ name = "anyhow"
 version = "1.0.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2cb2f989d18dd141ab8ae82f64d1a8cdd37e0840f73a406896cf5e99502fab61"
+
+[[package]]
+name = "assert-text"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f64d2af93474c0fa6804dbd2bf007c676b003f146251da66aa5266afa0cb3d8d"
+dependencies = [
+ "difference",
+ "regex",
+]
 
 [[package]]
 name = "case"
@@ -80,6 +92,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "difference"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
+
+[[package]]
 name = "exec-target"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -111,6 +129,12 @@ dependencies = [
  "case",
  "regex",
 ]
+
+[[package]]
+name = "hex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "indoc"

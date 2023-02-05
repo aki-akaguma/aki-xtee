@@ -136,7 +136,7 @@ mod test_1 {
 }
 
 mod test_2 {
-    use crate::helper2::cmp_file;
+    use crate::helper2::{cmp_file, cmp_text_file};
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -150,7 +150,7 @@ mod test_2 {
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.plain.txt");
+        assert_text_file_eq!("target/out020/", "fixtures/", "out.plain.txt");
     }
     //
     #[test]
@@ -210,7 +210,7 @@ mod test_2 {
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out021/", "fixtures/", "out.plain.txt");
+        assert_text_file_eq!("target/out021/", "fixtures/", "out.plain.txt");
         assert_file_eq!("target/out021/", "fixtures/", "out.text.gz");
         assert_file_eq!("target/out021/", "fixtures/", "out.text.xz");
         assert_file_eq!("target/out021/", "fixtures/", "out.text.zst");
