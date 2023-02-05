@@ -14,7 +14,7 @@ copy standard input to each files and standard output.
 
 - copy standard input to each files and standard output.
 - output files are compressed by auto with filename extension.
-- minimum support rustc 1.58.1 (db9d1b20b 2022-01-20)
+- minimum support rustc 1.60.0 (7737e0b5c 2022-04-04)
 
 ## Command Help
 
@@ -139,7 +139,7 @@ at your option.
 [crate-link]: https://crates.io/crates/aki-xtee
 [docs-image]: https://docs.rs/aki-xtee/badge.svg
 [docs-link]: https://docs.rs/aki-xtee/
-[rustc-image]: https://img.shields.io/badge/rustc-1.58+-blue.svg
+[rustc-image]: https://img.shields.io/badge/rustc-1.60+-blue.svg
 [license-image]: https://img.shields.io/badge/license-Apache2.0/MIT-blue.svg
 [test-ubuntu-image]: https://github.com/aki-akaguma/aki-xtee/actions/workflows/test-ubuntu.yml/badge.svg
 [test-ubuntu-link]: https://github.com/aki-akaguma/aki-xtee/actions/workflows/test-ubuntu.yml
