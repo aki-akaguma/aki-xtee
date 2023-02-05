@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update depends: memx-cdy(0.1.11), runnel(0.3.16)
 * update depends: exec-taget(0.2.8), indoc(2.0.0), rust-version-info-file(0.1.8)
 * update depends: zstd(0.12.3+zstd.1.5.2)
+* rename `fixtures/text10k.txt.gz` to `fixtures/text10k.text.gz`
 
 ### Fixed
 * license files

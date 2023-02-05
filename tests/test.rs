@@ -58,7 +58,7 @@ macro_rules! version_msg {
 
 macro_rules! fixture_text10k {
     () => {
-        "fixtures/text10k.txt.gz"
+        "fixtures/text10k.text.gz"
     };
 }
 macro_rules! fixture_invalid_utf8 {
