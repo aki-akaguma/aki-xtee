@@ -241,8 +241,14 @@ mod test_3 {
     //
     #[test]
     fn test_output_broken_pipe() {
+        #[cfg(target_os = "macos")]
+        let cmd = "gzcat";
+        #[cfg(not(target_os = "macos"))]
+        let cmd = "zcat";
+        //
         let cmdstr = format!(
-            "zcat \"{}\" | \"{}\" | head -n 2",
+            "{} \"{}\" | \"{}\" | head -n 2",
+            cmd,
             fixture_text10k!(),
             TARGET_EXE_PATH,
         );
