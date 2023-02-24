@@ -19,7 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update depends: zstd(0.12.3+zstd.1.5.2)
 * rename `fixtures/text10k.txt.gz` to `fixtures/text10k.text.gz`
 
+### Removed
+* `COPYING`
+
 ### Fixed
+* `LICENSE-APACHE`, `LICENSE-MIT`
 * license files
 * clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
 * rust-version: "1.56.0" to "1.60.0"
@@ -27,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * bug: on macos:
   - zcat: can't stat: fixtures/text10k.text.gz (fixtures/text10k.text.gz.Z): No such file or directory
   must be used `gzcat` on macos
+
 
 ## [0.1.24] (2023-01-11)
 ### Added
