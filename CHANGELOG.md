@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `LICENSE-APACHE`, `LICENSE-MIT`
 * license files
 * clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
-* clippy: `uninlined_format_args`, `unused_imports`, `dead_code`
+* clippy: `uninlined_format_args`, `unused_imports`, `dead_code`, `derivable_impls`
 * rust-version: "1.56.0" to "1.60.0"
 * bug: file compare on windows
 * bug: on macos:
