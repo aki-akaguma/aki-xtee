@@ -30,7 +30,6 @@ dependencies = [
  "memx-cdy",
  "runnel",
  "rust-version-info-file",
- "rustc_version",
  "xz2",
  "zstd",
 ]

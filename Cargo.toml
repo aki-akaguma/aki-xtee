@@ -44,7 +44,6 @@ assert-text = "0.2"
 
 [build-dependencies]
 rust-version-info-file = "0.1"
-rustc_version = "0.4"
 
 [workspace]
 members = [
