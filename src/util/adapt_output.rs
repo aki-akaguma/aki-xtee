@@ -7,6 +7,7 @@ use anyhow::Context;
 use std::fs::File;
 use std::io::Write;
 
+#[allow(dead_code)]
 pub struct NameWrite {
     pub name: String,
     pub write: Box<dyn Finish>,
