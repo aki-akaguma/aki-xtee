@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+* bzip2 supports
+* lz4 supports
+
 ### Changed
 * updated: runnel(0.4.0)
 * updated: rust-version-info-file(0.2)

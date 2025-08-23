@@ -1,7 +1,20 @@
-use crate::util::compress::gz::GzEnc;
 use crate::util::compress::plain::PlainOut;
+
+#[cfg(feature = "flate2")]
+use crate::util::compress::gz::GzEnc;
+
+#[cfg(feature = "xz2")]
 use crate::util::compress::xz::XzEnc;
+
+#[cfg(feature = "zstd")]
 use crate::util::compress::zst::ZstEnc;
+
+#[cfg(feature = "lz4")]
+use crate::util::compress::lz4::Lz4Enc;
+
+#[cfg(feature = "bzip2")]
+use crate::util::compress::bzip2::Bzip2Enc;
+
 use crate::util::compress::Finish;
 use anyhow::Context;
 use std::fs::File;
@@ -42,14 +55,55 @@ pub fn open_files(paths: &[String]) -> anyhow::Result<Vec<NameWrite>> {
         let file =
             File::create(path).with_context(|| format!("can not create file: {path_string}"))?;
         let w: Box<dyn Finish> = if path_string.ends_with(".gz") {
-            let enc = GzEnc::new(file)?;
-            Box::new(enc)
+            #[cfg(feature = "flate2")]
+            {
+                let enc = GzEnc::new(file)?;
+                Box::new(enc)
+            }
+            #[cfg(not(feature = "flate2"))]
+            {
+                bail!("not support '.gz' by compile option");
+            }
         } else if path_string.ends_with(".xz") {
-            let enc = XzEnc::new(file)?;
-            Box::new(enc)
+            #[cfg(feature = "xz2")]
+            {
+                let enc = XzEnc::new(file)?;
+                Box::new(enc)
+            }
+            #[cfg(not(feature = "xz2"))]
+            {
+                bail!("not support '.xy' by compile option");
+            }
         } else if path_string.ends_with(".zst") {
-            let enc = ZstEnc::new(file)?;
-            Box::new(enc)
+            #[cfg(feature = "zstd")]
+            {
+                let enc = ZstEnc::new(file)?;
+                Box::new(enc)
+            }
+            #[cfg(not(feature = "zstd"))]
+            {
+                bail!("not support '.zst' by compile option");
+            }
+        } else if path_string.ends_with(".lz4") {
+            #[cfg(feature = "lz4")]
+            {
+                let enc = Lz4Enc::new(file)?;
+                Box::new(enc)
+            }
+            #[cfg(not(feature = "lz4"))]
+            {
+                bail!("not support '.lz4' by compile option");
+            }
+        } else if path_string.ends_with(".bz2") {
+            #[cfg(feature = "bzip2")]
+            {
+                let enc = Bzip2Enc::new(file)?;
+                Box::new(enc)
+            }
+            #[cfg(not(feature = "bzip2"))]
+            {
+                bail!("not support '.bz2' by compile option");
+            }
         } else {
             let enc = PlainOut::new(file)?;
             Box::new(enc)

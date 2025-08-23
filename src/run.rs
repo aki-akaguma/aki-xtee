@@ -20,17 +20,15 @@ fn run_0(sioe: &RunnelIoe, files: &[String]) -> anyhow::Result<()> {
     for line in sioe.pg_in().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
-        //let line_len: usize = line_ss.len();
         //
         for file in file_vec.iter_mut() {
             file.write_fmt(format_args!("{line_ss}\n"))?;
         }
         //
-        #[rustfmt::skip]
-        sioe.pg_out().lock().write_fmt(format_args!("{line_ss}\n"))?;
+        sioe.pg_out().write_line(line_s)?;
     }
     //
-    sioe.pg_out().lock().flush()?;
+    sioe.pg_out().flush_line()?;
     {
         for file in file_vec.iter_mut() {
             file.flush()?;

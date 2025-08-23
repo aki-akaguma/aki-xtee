@@ -21,6 +21,8 @@ const ARGUMENTS_TEXT: &str = r#"Argument:
                  gzip compressed file at the end with '.gz',
                  xz2 compressed file at the end with '.xz',
                  zstd compressed file at the end with '.zst'.
+                 lz4 compressed file at the end with '.lz4'.
+                 bzip2 compressed file at the end with '.bz2'.
 "#;
 
 const EXAMPLES_TEXT: &str = r#"Examples:

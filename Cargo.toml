@@ -24,7 +24,7 @@ name = "aki-xtee"
 path = "src/main.rs"
 
 [features]
-default = ["flate2", "xz2", "zstd"]
+default = ["flate2", "xz2", "zstd", "lz4", "bzip2"]
 debian_build = []
 
 [dependencies]
@@ -36,6 +36,8 @@ memx-cdy = "0.1"
 flate2 = { version = "1.0", features = ["rust_backend"], default-features = false, optional = true }
 xz2 = { version = "0.1", optional = true }
 zstd = { version = "0.13", optional = true }
+lz4 = { version = "1.24", optional = true }
+bzip2 = { version = "0.5.2", optional = true }
 
 [dev-dependencies]
 indoc = "2.0"

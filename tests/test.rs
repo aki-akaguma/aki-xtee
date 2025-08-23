@@ -27,6 +27,8 @@ macro_rules! help_msg {
                              gzip compressed file at the end with '.gz',
                              xz2 compressed file at the end with '.xz',
                              zstd compressed file at the end with '.zst'.
+                             lz4 compressed file at the end with '.lz4'.
+                             bzip2 compressed file at the end with '.bz2'.
 
             Examples:
               You can simple use. Just arrange the files:
@@ -191,6 +193,32 @@ mod test_2 {
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
         assert_file_eq!("target/out020/", "fixtures/", "out.text.zst");
+    }
+    #[cfg(feature = "lz4")]
+    #[test]
+    fn test_lz4() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["target/out020/out.text.lz4"],
+            b"ABCDEFG\nHIJKLMN\n" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
+        assert!(oup.status.success());
+        assert_file_eq!("target/out020/", "fixtures/", "out.text.lz4");
+    }
+    #[cfg(feature = "bzip2")]
+    #[test]
+    fn test_bzip2() {
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            ["target/out020/out.text.bz2"],
+            b"ABCDEFG\nHIJKLMN\n" as &[u8],
+        );
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
+        assert!(oup.status.success());
+        assert_file_eq!("target/out020/", "fixtures/", "out.text.bz2");
     }
     //
     #[cfg(feature = "xz2")]
