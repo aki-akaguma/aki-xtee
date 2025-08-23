@@ -5,7 +5,7 @@ copy standard input to each files and standard output.
 
 - copy standard input to each files and standard output.
 - output files are compressed by auto with filename extension.
-- minimum support rustc 1.60.0 (7737e0b5c 2022-04-04)
+- minimum support rustc 1.75.0 (82e1608df 2023-12-21)
 
 # Command Help
 

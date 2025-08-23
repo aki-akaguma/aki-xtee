@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * updated: runnel(0.4.0)
 * updated: rust-version-info-file(0.2)
 
+### Fixed
+* rust-version: "1.75.0"
 
 ## [0.1.25] (2024-06-19)
 ### Added
