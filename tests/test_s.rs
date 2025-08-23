@@ -86,7 +86,7 @@ macro_rules! do_execute {
         match r {
             Ok(_) => {}
             Err(ref err) => {
-                let _ = sioe.perr().lock()
+                let _ = sioe.pg_err().lock()
                 .write_fmt(format_args!("{}: {:#}\n", program, err));
             }
         };
@@ -96,10 +96,10 @@ macro_rules! do_execute {
 
 macro_rules! buff {
     ($sioe:expr, serr) => {
-        $sioe.perr().lock().buffer_str()
+        $sioe.pg_err().lock().buffer_to_string()
     };
     ($sioe:expr, sout) => {
-        $sioe.pout().lock().buffer_str()
+        $sioe.pg_out().lock().buffer_to_string()
     };
 }
 

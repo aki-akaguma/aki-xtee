@@ -3,7 +3,7 @@ use crate::util::compress::Finish;
 use crate::util::err::BrokenPipeError;
 use crate::util::open_files;
 use runnel::RunnelIoe;
-use std::io::{BufRead, Write};
+use std::io::Write;
 
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     //println!("{:?}", conf);
@@ -17,7 +17,7 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
 fn run_0(sioe: &RunnelIoe, files: &[String]) -> anyhow::Result<()> {
     let mut file_vec = open_files(files)?;
     //
-    for line in sioe.pin().lock().lines() {
+    for line in sioe.pg_in().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         //let line_len: usize = line_ss.len();
@@ -27,10 +27,10 @@ fn run_0(sioe: &RunnelIoe, files: &[String]) -> anyhow::Result<()> {
         }
         //
         #[rustfmt::skip]
-        sioe.pout().lock().write_fmt(format_args!("{line_ss}\n"))?;
+        sioe.pg_out().lock().write_fmt(format_args!("{line_ss}\n"))?;
     }
     //
-    sioe.pout().lock().flush()?;
+    sioe.pg_out().lock().flush()?;
     {
         for file in file_vec.iter_mut() {
             file.flush()?;

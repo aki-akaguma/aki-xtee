@@ -30,7 +30,7 @@ debian_build = []
 [dependencies]
 anyhow = "1.0"
 flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
-runnel = "0.3"
+runnel = "0.4"
 memx-cdy = "0.1"
 
 flate2 = { version = "1.0", features = ["rust_backend"], default-features = false, optional = true }
@@ -43,7 +43,7 @@ exec-target = "0.2"
 assert-text = "0.2"
 
 [build-dependencies]
-rust-version-info-file = "0.1"
+rust-version-info-file = "0.2"
 
 [workspace]
 members = [
