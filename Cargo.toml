@@ -37,12 +37,19 @@ flate2 = { version = "1.0", features = ["rust_backend"], default-features = fals
 xz2 = { version = "0.1", optional = true }
 zstd = { version = "0.13", optional = true }
 lz4 = { version = "1.24", optional = true }
+
+## 
+# bzip2 v0.6.0 and later depends on rustc v1.82.0, so it cannot be used with rustc v1.75.0.
+# rustc v1.75.0 is used on ubuntu noble(2024).
 bzip2 = { version = "0.5.2", optional = true }
 
 [dev-dependencies]
 indoc = "2.0"
 exec-target = "0.2"
 assert-text = "0.2"
+tempfile = "3.10"
+flate2 = { version = "1.0", features = ["rust_backend"], default-features = false }
+xz2 = { version = "0.1" }
 
 [build-dependencies]
 rust-version-info-file = "0.2"

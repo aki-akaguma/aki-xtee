@@ -1,8 +1,84 @@
 #[allow(unused_macros)]
+macro_rules! help_msg {
+    () => {
+        concat!(
+            version_msg!(),
+            "\n",
+            indoc::indoc!(
+                r#"
+            Usage:
+              aki-xtee [options] [<file>...]
+
+            this is like the linux command `tee`.
+            copy standard input to each <file>, and to standard output.
+            automatic discovery file type: plain, gz, xz and zst.
+
+            Options:
+              -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+              -p, --pipe-out <num>  write to pipe <num> [unimplemented]
+
+              -H, --help        display this help and exit
+              -V, --version     display version information and exit
+              -X <x-options>    x options. try -X help
+
+            Argument:
+              <file>         utf-8 encoded plain text file,
+                             gzip compressed file at the end with '.gz',
+                             xz2 compressed file at the end with '.xz',
+                             zstd compressed file at the end with '.zst'.
+                             lz4 compressed file at the end with '.lz4'.
+                             bzip2 compressed file at the end with '.bz2'.
+
+            Examples:
+              You can simple use. Just arrange the files:
+                cat in-file | aki-xtee file1 file2.gz file3.xz file4.zst
+            "#
+            ),
+            "\n",
+        )
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! try_help_msg {
+    () => {
+        "Try --help for help.\n"
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! program_name {
+    () => {
+        "aki-xtee"
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! version_msg {
+    () => {
+        concat!(program_name!(), " ", env!("CARGO_PKG_VERSION"), "\n")
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! fixture_text10k {
+    () => {
+        "fixtures/text10k.text.gz"
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! fixture_invalid_utf8 {
+    () => {
+        "fixtures/invalid_utf8.txt"
+    };
+}
+
+#[allow(unused_macros)]
 macro_rules! assert_file_eq {
     ($p1:expr, $p2:expr, $file_name:expr) => {
         assert_eq!(
-            cmp_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
+            crate::cmp_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
             true
         );
     };
@@ -28,7 +104,7 @@ where
 macro_rules! assert_text_file_eq {
     ($p1:expr, $p2:expr, $file_name:expr) => {
         assert_eq!(
-            cmp_text_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
+            crate::cmp_text_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
             true
         );
     };

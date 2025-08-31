@@ -8,14 +8,15 @@ use std::io::Write;
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     //println!("{:?}", conf);
     //
-    let r = run_0(sioe, &conf.arg_params);
+    let r = run_0(sioe, conf);
     if r.is_broken_pipe() {
         return Ok(());
     }
     r
 }
-fn run_0(sioe: &RunnelIoe, files: &[String]) -> anyhow::Result<()> {
-    let mut file_vec = open_files(files)?;
+fn run_0(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+    let files: &[String] = &conf.arg_params;
+    let mut file_vec = open_files(conf.base_dir(), files)?;
     //
     for line in sioe.pg_in().lines() {
         let line_s = line?;

@@ -41,11 +41,16 @@ impl Write for NameWrite {
     }
 }
 
-pub fn open_files(paths: &[String]) -> anyhow::Result<Vec<NameWrite>> {
+pub fn open_files(base_dir: String, paths: &[String]) -> anyhow::Result<Vec<NameWrite>> {
     let mut vec = Vec::new();
     //
     for path_string in paths {
-        let path = std::path::Path::new(path_string);
+        let path_string = if base_dir.is_empty() {
+            path_string.clone()
+        } else {
+            format!("{base_dir}/{path_string}")
+        };
+        let path = std::path::Path::new(&path_string);
         if let Some(parent) = path.parent() {
             if !parent.is_dir() {
                 std::fs::create_dir_all(parent)?;
