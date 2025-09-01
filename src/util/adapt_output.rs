@@ -41,8 +41,26 @@ impl Write for NameWrite {
     }
 }
 
-pub fn open_files(base_dir: String, paths: &[String]) -> anyhow::Result<Vec<NameWrite>> {
+pub fn open_files(
+    base_dir: String,
+    append_paths: &[String],
+    paths: &[String],
+) -> anyhow::Result<Vec<NameWrite>> {
     let mut vec = Vec::new();
+    //
+    for path_string in append_paths {
+        let path_string = if base_dir.is_empty() {
+            path_string.clone()
+        } else {
+            format!("{base_dir}/{path_string}")
+        };
+        let w = make_output(&path_string, true)?;
+        //
+        vec.push(NameWrite {
+            name: path_string.clone(),
+            write: w,
+        });
+    }
     //
     for path_string in paths {
         let path_string = if base_dir.is_empty() {
@@ -50,69 +68,8 @@ pub fn open_files(base_dir: String, paths: &[String]) -> anyhow::Result<Vec<Name
         } else {
             format!("{base_dir}/{path_string}")
         };
-        let path = std::path::Path::new(&path_string);
-        if let Some(parent) = path.parent() {
-            if !parent.is_dir() {
-                std::fs::create_dir_all(parent)?;
-            }
-        }
+        let w = make_output(&path_string, false)?;
         //
-        let file =
-            File::create(path).with_context(|| format!("can not create file: {path_string}"))?;
-        let w: Box<dyn Finish> = if path_string.ends_with(".gz") {
-            #[cfg(feature = "flate2")]
-            {
-                let enc = GzEnc::new(file)?;
-                Box::new(enc)
-            }
-            #[cfg(not(feature = "flate2"))]
-            {
-                bail!("not support '.gz' by compile option");
-            }
-        } else if path_string.ends_with(".xz") {
-            #[cfg(feature = "xz2")]
-            {
-                let enc = XzEnc::new(file)?;
-                Box::new(enc)
-            }
-            #[cfg(not(feature = "xz2"))]
-            {
-                bail!("not support '.xy' by compile option");
-            }
-        } else if path_string.ends_with(".zst") {
-            #[cfg(feature = "zstd")]
-            {
-                let enc = ZstEnc::new(file)?;
-                Box::new(enc)
-            }
-            #[cfg(not(feature = "zstd"))]
-            {
-                bail!("not support '.zst' by compile option");
-            }
-        } else if path_string.ends_with(".lz4") {
-            #[cfg(feature = "lz4")]
-            {
-                let enc = Lz4Enc::new(file)?;
-                Box::new(enc)
-            }
-            #[cfg(not(feature = "lz4"))]
-            {
-                bail!("not support '.lz4' by compile option");
-            }
-        } else if path_string.ends_with(".bz2") {
-            #[cfg(feature = "bzip2")]
-            {
-                let enc = Bzip2Enc::new(file)?;
-                Box::new(enc)
-            }
-            #[cfg(not(feature = "bzip2"))]
-            {
-                bail!("not support '.bz2' by compile option");
-            }
-        } else {
-            let enc = PlainOut::new(file)?;
-            Box::new(enc)
-        };
         vec.push(NameWrite {
             name: path_string.clone(),
             write: w,
@@ -120,4 +77,76 @@ pub fn open_files(base_dir: String, paths: &[String]) -> anyhow::Result<Vec<Name
     }
     //
     Ok(vec)
+}
+
+fn make_output(path_string: &str, is_append: bool) -> anyhow::Result<Box<dyn Finish>> {
+    let path = std::path::Path::new(&path_string);
+    if let Some(parent) = path.parent() {
+        if !parent.is_dir() {
+            std::fs::create_dir_all(parent)?;
+        }
+    }
+    let file = if is_append {
+        File::options()
+            .append(true)
+            .open(path)
+            .with_context(|| format!("can not open append file: {path_string}"))?
+    } else {
+        File::create(path).with_context(|| format!("can not create file: {path_string}"))?
+    };
+    let w: Box<dyn Finish> = if path_string.ends_with(".gz") {
+        #[cfg(feature = "flate2")]
+        {
+            let enc = GzEnc::new(file)?;
+            Box::new(enc)
+        }
+        #[cfg(not(feature = "flate2"))]
+        {
+            bail!("not support '.gz' by compile option");
+        }
+    } else if path_string.ends_with(".xz") {
+        #[cfg(feature = "xz2")]
+        {
+            let enc = XzEnc::new(file)?;
+            Box::new(enc)
+        }
+        #[cfg(not(feature = "xz2"))]
+        {
+            bail!("not support '.xy' by compile option");
+        }
+    } else if path_string.ends_with(".zst") {
+        #[cfg(feature = "zstd")]
+        {
+            let enc = ZstEnc::new(file)?;
+            Box::new(enc)
+        }
+        #[cfg(not(feature = "zstd"))]
+        {
+            bail!("not support '.zst' by compile option");
+        }
+    } else if path_string.ends_with(".lz4") {
+        #[cfg(feature = "lz4")]
+        {
+            let enc = Lz4Enc::new(file)?;
+            Box::new(enc)
+        }
+        #[cfg(not(feature = "lz4"))]
+        {
+            bail!("not support '.lz4' by compile option");
+        }
+    } else if path_string.ends_with(".bz2") {
+        #[cfg(feature = "bzip2")]
+        {
+            let enc = Bzip2Enc::new(file)?;
+            Box::new(enc)
+        }
+        #[cfg(not(feature = "bzip2"))]
+        {
+            bail!("not support '.bz2' by compile option");
+        }
+    } else {
+        let enc = PlainOut::new(file)?;
+        Box::new(enc)
+    };
+    Ok(w)
 }

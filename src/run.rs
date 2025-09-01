@@ -15,8 +15,9 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     r
 }
 fn run_0(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+    let append_files: &[String] = &conf.opt_append;
     let files: &[String] = &conf.arg_params;
-    let mut file_vec = open_files(conf.base_dir(), files)?;
+    let mut file_vec = open_files(conf.base_dir(), append_files, files)?;
     //
     for line in sioe.pg_in().lines() {
         let line_s = line?;

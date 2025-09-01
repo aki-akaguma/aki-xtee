@@ -14,8 +14,7 @@ macro_rules! help_msg {
             automatic discovery file type: plain, gz, xz and zst.
 
             Options:
-              -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
-              -p, --pipe-out <num>  write to pipe <num> [unimplemented]
+              -a, --append <file>   append to the <file>, do not overwrite
 
               -H, --help        display this help and exit
               -V, --version     display version information and exit

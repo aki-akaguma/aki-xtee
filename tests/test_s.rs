@@ -453,7 +453,6 @@ mod test_2_file_s {
     }
     //
     #[test]
-    #[ignore] // append is not implemented yet
     fn test_append_mode() {
         let _ = std::fs::create_dir_all("target/out_more");
         let file_path = "target/out_more/append_test.txt";
