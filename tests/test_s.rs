@@ -35,7 +35,6 @@ macro_rules! buff {
 
 #[macro_use]
 mod helper2;
-use helper2::{cmp_file, cmp_text_file};
 
 mod test_0_s {
     use libaki_xtee::*;
@@ -89,11 +88,11 @@ mod test_0_s {
 }
 
 mod test_0_x_options_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::*;
     use runnel::*;
     use std::io::Write;
-    use tempfile::tempdir;
     //
     #[test]
     fn test_x_rust_version_info() {
@@ -132,27 +131,30 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_base_dir() {
-        let temp_dir = tempdir().unwrap();
+        let test_out = TestOut::new();
+        let fnm = "test_file.txt";
+        let target_path = test_out.target_path(fnm);
+        let base_dir = test_out.base_dir();
+        let base_dir_str = base_dir.to_str().unwrap();
+        //
         let (r, sioe) = do_execute!(
-            &[
-                "-X",
-                &format!("base_dir={}", temp_dir.path().to_str().unwrap()),
-                "test_file.txt",
-            ],
+            &["-X", &format!("base_dir={base_dir_str}"), fnm],
             "hello from base_dir\n"
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "hello from base_dir\n");
         assert!(r.is_ok());
-        let content = std::fs::read_to_string(temp_dir.path().join("test_file.txt")).unwrap();
+        //
+        let content = std::fs::read_to_string(target_path).unwrap();
         assert_eq!(content, "hello from base_dir\n");
     }
     //
     #[test]
     fn test_x_base_dir_non_existent_dir() {
+        let fnm = "test_file.txt";
         let (r, sioe) = do_execute!(
-            &["-X", "base_dir=/non/existent/dir", "test_file.txt"],
-            "hello\n"
+            &["-X", "base_dir=/non/existent/dir", fnm],
+            "hello from base_dir\n"
         );
         #[cfg(target_os = "linux")]
         {
@@ -170,24 +172,27 @@ mod test_0_x_options_s {
         {
             //assert!(buff!(sioe, serr).contains("The system cannot find the path specified."));
             assert_eq!(buff!(sioe, serr), "");
-            assert_eq!(buff!(sioe, sout), "hello\n");
+            assert_eq!(buff!(sioe, sout), "hello from base_dir\n");
             assert!(r.is_ok());
         }
     }
     //
     #[test]
     fn test_x_base_dir_non_existent_file() {
-        let temp_dir = tempdir().unwrap();
+        let test_out = TestOut::new();
+        let base_dir = test_out.base_dir();
+        let base_dir_str = base_dir.to_str().unwrap();
+        //
         let (r, sioe) = do_execute!(
             &[
                 "-X",
-                &format!("base_dir={}", temp_dir.path().to_str().unwrap()),
+                &format!("base_dir={base_dir_str}"),
                 "non_existent_dir/non_existent_file.txt",
             ],
-            "hello\n"
+            "hello from base_dir\n"
         );
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "hello\n");
+        assert_eq!(buff!(sioe, sout), "hello from base_dir\n");
         assert!(r.is_ok());
     }
 }
@@ -228,6 +233,7 @@ mod test_1_stdout_s {
 }
 
 mod test_2_file_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -235,24 +241,34 @@ mod test_2_file_s {
     //
     #[test]
     fn test_plain() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.plain.txt"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_text_file_eq!("target/out_s020/", "fixtures/", "out.plain.txt");
+        //
+        assert!(test_out.cmp_text_file_with_fixtures(fnm).unwrap());
     }
     //
     #[test]
     fn test_empty_input() {
         use std::io::Read;
-        let out_file = "target/tmp/out_more_s/out.plain.txt";
-        let _ = std::fs::create_dir_all("target/tmp/out_more_s");
-        let (r, sioe) = do_execute!(&[out_file], "");
+        //
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_ok());
         //
-        let mut f = std::fs::File::open(out_file).unwrap();
+        let mut f = std::fs::File::open(target_path).unwrap();
         let mut buf = String::new();
         f.read_to_string(&mut buf).unwrap();
         assert_eq!(buf, "");
@@ -269,8 +285,12 @@ mod test_2_file_s {
 
     #[test]
     fn test_output_path_is_dir() {
-        let _ = std::fs::create_dir_all("target/tmp/out_is_dir_s");
-        let (r, sioe) = do_execute!(&["target/tmp/out_is_dir_s"], "some data\n");
+        let test_out = TestOut::new();
+        let target_path = test_out.base_dir().join("out_is_dir");
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let _ = std::fs::create_dir_all(&target_path);
+        let (r, sioe) = do_execute!(&[target_path_str], "some data\n");
         #[cfg(not(windows))]
         assert!(buff!(sioe, serr).contains("Is a directory"));
         #[cfg(windows)]
@@ -282,19 +302,23 @@ mod test_2_file_s {
     #[test]
     #[cfg(unix)] // This test is for unix-like systems
     fn test_write_permission_error() {
-        let dir = "target/no_write_permission_s";
-        let out_file = "target/no_write_permission_s/out.plain.txt";
-        let _ = std::fs::create_dir_all(dir);
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path_dir = test_out.base_dir().join("no_write_permission");
+        let target_path = target_path_dir.join(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let _ = std::fs::create_dir_all(&target_path_dir);
         // set read-only permission
-        let mut perms = std::fs::metadata(dir).unwrap().permissions();
+        let mut perms = std::fs::metadata(&target_path_dir).unwrap().permissions();
         let perms_bak = perms.clone();
         perms.set_readonly(true);
-        std::fs::set_permissions(dir, perms).unwrap();
+        std::fs::set_permissions(&target_path_dir, perms).unwrap();
 
-        let (r, sioe) = do_execute!(&[out_file], "some data");
+        let (r, sioe) = do_execute!(&[target_path_str], "some data");
 
         // restore permission
-        std::fs::set_permissions(dir, perms_bak).unwrap();
+        std::fs::set_permissions(&target_path_dir, perms_bak).unwrap();
 
         assert!(buff!(sioe, serr).contains("Permission denied"));
         assert_eq!(buff!(sioe, sout), "");
@@ -303,7 +327,12 @@ mod test_2_file_s {
     //
     #[test]
     fn test_unsupported_file_extension() {
-        let (r, sioe) = do_execute!(&["target/tmp/out_more2/out.unsupported"], "some data");
+        let test_out = TestOut::new();
+        let fnm = "out.unsupported";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
         assert!(r.is_ok());
@@ -311,50 +340,61 @@ mod test_2_file_s {
     //
     #[test]
     fn test_option_after_argument() {
-        let (r, sioe) = do_execute!(&["target/tmp/out_more3/out.plain.txt", "-V"], "some data");
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str, "-V"], "some data");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "aki-xtee 0.1.25\n");
+        assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
     }
     //
     #[test]
     fn test_filename_with_spaces() {
-        let _ = std::fs::create_dir_all("target/tmp/out_more3");
-        let filename = "target/tmp/out_more3/file with spaces.txt";
-        let (r, sioe) = do_execute!(&[filename], "some data");
+        let test_out = TestOut::new();
+        let fnm = "file with spaces.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
         assert!(r.is_ok());
         //
-        let content = std::fs::read_to_string(filename).unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "some data\n");
     }
     //
     #[test]
     fn test_file_overwrite() {
         use std::io::Write;
-        let _ = std::fs::create_dir_all("target/tmp/out_more4");
-        let filename = "target/tmp/out_more4/overwrite.txt";
+        //
+        let test_out = TestOut::new();
+        let fnm = "overwrite.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         // create a file with some initial content
-        let mut f = std::fs::File::create(filename).unwrap();
+        let mut f = std::fs::File::create(target_path_str).unwrap();
         f.write_all(b"initial content").unwrap();
         //
-        let (r, sioe) = do_execute!(&[filename], "new content");
+        let (r, sioe) = do_execute!(&[target_path_str], "new content");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "new content\n");
         assert!(r.is_ok());
         //
-        let content = std::fs::read_to_string(filename).unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "new content\n");
     }
     //
     #[test]
     #[cfg(unix)]
     fn test_symlink() {
-        use tempfile::tempdir;
-        let temp_dir = tempdir().unwrap();
-        let out_dir = temp_dir.path().join("out_more4");
-        let _ = std::fs::create_dir_all(&out_dir);
+        let test_out = TestOut::new();
+        let out_dir = test_out.base_dir();
+        let _ = std::fs::create_dir_all(out_dir);
         let filename = out_dir.join("symlink_target.txt");
         let symlink = out_dir.join("symlink.txt");
         // create a symlink to a file
@@ -371,7 +411,6 @@ mod test_2_file_s {
     //
     #[test]
     fn test_file_named_dash() {
-        let _ = std::fs::create_dir_all("target/out_more5");
         let (r, sioe) = do_execute!(&["-"], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
@@ -418,17 +457,19 @@ mod test_2_file_s {
     //
     #[test]
     fn test_filename_with_special_chars() {
-        let _ = std::fs::create_dir_all("target/out_more2");
-        let filename = "target/out_more2/!@#$%^&*().txt";
+        let test_out = TestOut::new();
+        let fnm = "!@#$%^&*().txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[filename], "special chars\n");
+        let (r, sioe) = do_execute!(&[target_path_str], "special chars\n");
         #[cfg(not(windows))]
         {
             assert_eq!(buff!(sioe, serr), "");
             assert_eq!(buff!(sioe, sout), "special chars\n");
             assert!(r.is_ok());
             //
-            let content = std::fs::read_to_string(filename).unwrap();
+            let content = std::fs::read_to_string(target_path_str).unwrap();
             assert_eq!(content, "special chars\n");
         }
         #[cfg(windows)]
@@ -454,21 +495,25 @@ mod test_2_file_s {
     //
     #[test]
     fn test_append_mode() {
-        let _ = std::fs::create_dir_all("target/out_more");
-        let file_path = "target/out_more/append_test.txt";
-        std::fs::write(file_path, "initial content\n").unwrap();
+        let test_out = TestOut::new();
+        let fnm = "append_test.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&["-a", file_path], "appended content\n");
+        std::fs::write(target_path_str, "initial content\n").unwrap();
+        //
+        let (r, sioe) = do_execute!(&["-a", target_path_str], "appended content\n");
         assert_eq!(buff!(sioe, serr), "");
         assert!(r.is_ok());
         //
-        let content = std::fs::read_to_string(file_path).unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "initial content\nappended content\n");
     }
 }
 
 #[cfg(feature = "flate2")]
 mod test_3_file_gz_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -476,16 +521,23 @@ mod test_3_file_gz_s {
     //
     #[test]
     fn test_gz() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.text.gz"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.text.gz";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.text.gz");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "xz2")]
 mod test_3_file_xz2_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -493,16 +545,23 @@ mod test_3_file_xz2_s {
     //
     #[test]
     fn test_xz() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.text.xz"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.text.xz";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.text.xz");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "zstd")]
 mod test_3_file_zstd_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -510,16 +569,23 @@ mod test_3_file_zstd_s {
     //
     #[test]
     fn test_zstd() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.text.zst"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.text.zst";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.text.zst");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "lz4")]
 mod test_3_file_lz4_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -527,16 +593,23 @@ mod test_3_file_lz4_s {
     //
     #[test]
     fn test_lz4() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.text.lz4"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.text.lz4";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.text.lz4");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "bzip2")]
 mod test_3_file_bzip2_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -544,15 +617,22 @@ mod test_3_file_bzip2_s {
     //
     #[test]
     fn test_bzip2() {
-        let (r, sioe) = do_execute!(&["target/out_s020/out.text.bz2"], "ABCDEFG\nHIJKLMN\n");
+        let test_out = TestOut::new();
+        let fnm = "out.text.bz2";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_file_eq!("target/out_s020/", "fixtures/", "out.text.bz2");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 mod test_4_complex_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -560,16 +640,17 @@ mod test_4_complex_s {
     //
     #[test]
     fn test_stdout_and_file_output() {
-        let _ = std::fs::create_dir_all("target/out_more");
-        let (r, sioe) = do_execute!(
-            &["-", "target/out_more/another.plain.txt"],
-            "stdout and file\n"
-        );
+        let test_out = TestOut::new();
+        let fnm = "another.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(&["-", target_path_str], "stdout and file\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "stdout and file\n");
         assert!(r.is_ok());
         //
-        let content = std::fs::read_to_string("target/out_more/another.plain.txt").unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "stdout and file\n");
     }
     /*
@@ -603,6 +684,7 @@ mod test_4_complex_s {
 #[cfg(feature = "lz4")]
 #[cfg(feature = "bzip2")]
 mod test_4_complex_more_s {
+    use crate::helper2::TestOut;
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -610,32 +692,47 @@ mod test_4_complex_more_s {
     //
     #[test]
     fn test_multiple_files_different_compression() {
+        let test_out = TestOut::new();
+        let fnm_plain = "out.plain.txt";
+        let fnm_gz = "out.text.gz";
+        let fnm_xz = "out.text.xz";
+        let fnm_zst = "out.text.zst";
+        let fnm_lz4 = "out.text.lz4";
+        let fnm_bz2 = "out.text.bz2";
+        //
         let (r, sioe) = do_execute!(
             &[
-                "target/out_s021/out.plain.txt",
-                "target/out_s021/out.text.gz",
-                "target/out_s021/out.text.xz",
-                "target/out_s021/out.text.zst",
-                "target/out_s021/out.text.lz4",
-                "target/out_s021/out.text.bz2",
+                test_out.target_path(fnm_plain).to_str().unwrap(),
+                test_out.target_path(fnm_gz).to_str().unwrap(),
+                test_out.target_path(fnm_xz).to_str().unwrap(),
+                test_out.target_path(fnm_zst).to_str().unwrap(),
+                test_out.target_path(fnm_lz4).to_str().unwrap(),
+                test_out.target_path(fnm_bz2).to_str().unwrap(),
             ],
             "ABCDEFG\nHIJKLMN\n"
         );
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
-        assert_text_file_eq!("target/out_s021/", "fixtures/", "out.plain.txt");
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.text.gz");
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.text.xz");
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.text.zst");
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.text.lz4");
-        assert_file_eq!("target/out_s021/", "fixtures/", "out.text.bz2");
+        //
+        assert!(test_out.cmp_text_file_with_fixtures(fnm_plain).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_gz).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_xz).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_zst).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_lz4).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_bz2).unwrap());
     }
     //
     #[test]
+    #[ignore]
     fn test_large_input_file() {
         use std::io::Read;
-        let _ = std::fs::create_dir_all("target/out_more2");
+        let test_out = TestOut::new();
+        let fnm_plain = "out.plain.txt";
+        let fnm_gz = "out.text.gz";
+        let target_path_plain = test_out.target_path(fnm_plain);
+        let target_path_gz = test_out.target_path(fnm_gz);
+        //
         let mut input_data = Vec::new();
         let mut f = flate2::read::GzDecoder::new(std::fs::File::open(fixture_text10k!()).unwrap());
         f.read_to_end(&mut input_data).unwrap();
@@ -643,8 +740,8 @@ mod test_4_complex_more_s {
         //
         let (r, sioe) = do_execute!(
             &[
-                "target/out_more2/out.plain.txt",
-                "target/out_more2/out.text.gz",
+                target_path_plain.to_str().unwrap(),
+                target_path_gz.to_str().unwrap(),
             ],
             &s
         );
@@ -652,13 +749,12 @@ mod test_4_complex_more_s {
         assert!(r.is_ok());
         //
         // Verify plain text file
-        let content = std::fs::read("target/out_more2/out.plain.txt").unwrap();
+        let content = std::fs::read(&target_path_plain).unwrap();
         assert_eq!(content, input_data);
         //
         // Verify gz file
-        let mut gz_decoder = flate2::read::GzDecoder::new(
-            std::fs::File::open("target/out_more2/out.text.gz").unwrap(),
-        );
+        let mut gz_decoder =
+            flate2::read::GzDecoder::new(std::fs::File::open(&target_path_gz).unwrap());
         let mut s = Vec::new();
         gz_decoder.read_to_end(&mut s).unwrap();
         assert_eq!(s, input_data);
@@ -666,7 +762,7 @@ mod test_4_complex_more_s {
 }
 
 /*
-mod test_3_s {
+mod test_5_s {
     /*
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};

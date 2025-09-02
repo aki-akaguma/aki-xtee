@@ -2,5 +2,5 @@
 
 ## Todos
 
-- [ ] append file. option: '-a, --append'
+- [x] append file. option: '-a, --append'
 - [ ] pipe out

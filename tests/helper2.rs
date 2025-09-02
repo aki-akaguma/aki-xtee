@@ -73,6 +73,7 @@ macro_rules! fixture_invalid_utf8 {
     };
 }
 
+/*
 #[allow(unused_macros)]
 macro_rules! assert_file_eq {
     ($p1:expr, $p2:expr, $file_name:expr) => {
@@ -81,6 +82,53 @@ macro_rules! assert_file_eq {
             true
         );
     };
+}
+*/
+
+#[allow(unused_macros)]
+macro_rules! test_out_dir {
+    () => {
+        "target/out"
+    };
+}
+
+#[allow(dead_code)]
+pub struct TestOut {
+    base_dir: tempfile::TempDir,
+}
+#[allow(dead_code)]
+impl TestOut {
+    pub fn new() -> Self {
+        let test_out_str = "target/test_out";
+        let _ = std::fs::create_dir_all(test_out_str);
+        Self {
+            base_dir: tempfile::tempdir_in(test_out_str).unwrap(),
+        }
+    }
+    pub fn base_dir(&self) -> &std::path::Path {
+        self.base_dir.path()
+    }
+    pub fn target_path(&self, out_file_name: &str) -> std::path::PathBuf {
+        self.base_dir.path().join(out_file_name)
+    }
+    pub fn cmp_text_file_with_fixtures(&self, out_file_name: &str) -> std::io::Result<bool> {
+        cmp_text_file(
+            self.target_path(out_file_name),
+            format!("fixtures/{out_file_name}"),
+        )
+    }
+    pub fn cmp_file_with_fixtures(&self, out_file_name: &str) -> std::io::Result<bool> {
+        cmp_file(
+            self.target_path(out_file_name),
+            format!("fixtures/{out_file_name}"),
+        )
+    }
+}
+#[allow(dead_code)]
+impl Default for TestOut {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[allow(dead_code)]

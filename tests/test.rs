@@ -2,7 +2,6 @@ const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAM
 
 #[macro_use]
 mod helper2;
-use helper2::{cmp_file, cmp_text_file};
 
 mod test_0 {
     use exec_target::exec_target;
@@ -55,9 +54,9 @@ mod test_0 {
 }
 
 mod test_0_x_options {
+    use crate::helper2::TestOut;
     use exec_target::exec_target;
     use exec_target::exec_target_with_in;
-    use tempfile::tempdir;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
@@ -89,29 +88,32 @@ mod test_0_x_options {
     //
     #[test]
     fn test_x_base_dir() {
-        let temp_dir = tempdir().unwrap();
+        let test_out = TestOut::new();
+        let fnm = "test_file.txt";
+        let target_path = test_out.target_path(fnm);
+        let base_dir = test_out.base_dir();
+        let base_dir_str = base_dir.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            [
-                "-X",
-                &format!("base_dir={}", temp_dir.path().to_str().unwrap()),
-                "test_file.txt",
-            ],
+            ["-X", &format!("base_dir={base_dir_str}"), fnm],
             b"hello from base_dir\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "hello from base_dir\n");
         assert!(oup.status.success());
-        let content = std::fs::read_to_string(temp_dir.path().join("test_file.txt")).unwrap();
+        //
+        let content = std::fs::read_to_string(target_path).unwrap();
         assert_eq!(content, "hello from base_dir\n");
     }
     //
     #[test]
     fn test_x_base_dir_non_existent_dir() {
+        let fnm = "test_file.txt";
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-X", "base_dir=/non/existent/dir", "test_file.txt"],
-            b"hello\n" as &[u8],
+            ["-X", "base_dir=/non/existent/dir", fnm],
+            b"hello from base_dir\n" as &[u8],
         );
         #[cfg(target_os = "linux")]
         {
@@ -128,7 +130,7 @@ mod test_0_x_options {
         #[cfg(windows)]
         {
             assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "hello\n");
+            assert_eq!(oup.stdout, "hello from base_dir\n");
             assert!(oup.status.success());
             /*
             assert!(oup
@@ -140,18 +142,21 @@ mod test_0_x_options {
     //
     #[test]
     fn test_x_base_dir_non_existent_file() {
-        let temp_dir = tempdir().unwrap();
+        let test_out = TestOut::new();
+        let base_dir = test_out.base_dir();
+        let base_dir_str = base_dir.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
             [
                 "-X",
-                &format!("base_dir={}", temp_dir.path().to_str().unwrap()),
+                &format!("base_dir={base_dir_str}"),
                 "non_existent_dir/non_existent_file.txt",
             ],
-            b"hello\n" as &[u8],
+            b"hello from base_dir\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "hello\n");
+        assert_eq!(oup.stdout, "hello from base_dir\n");
         assert!(oup.status.success());
     }
 }
@@ -188,32 +193,44 @@ mod test_1_stdout {
 }
 
 mod test_2_file {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_plain() {
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.plain.txt"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_text_file_eq!("target/out020/", "fixtures/", "out.plain.txt");
+        //
+        assert!(test_out.cmp_text_file_with_fixtures(fnm).unwrap());
     }
     //
     #[test]
     fn test_empty_input() {
         use std::io::Read;
-        let out_file = "target/tmp/out_more/out.plain.txt";
-        let _ = std::fs::create_dir_all("target/tmp/out_more");
-        let oup = exec_target_with_in(TARGET_EXE_PATH, [out_file], b"" as &[u8]);
+        //
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "");
         assert!(oup.status.success());
-        let mut f = std::fs::File::open(out_file).unwrap();
+        //
+        let mut f = std::fs::File::open(target_path).unwrap();
         let mut buf = String::new();
         f.read_to_string(&mut buf).unwrap();
         assert_eq!(buf, "");
@@ -234,12 +251,12 @@ mod test_2_file {
     //
     #[test]
     fn test_output_path_is_dir() {
-        let _ = std::fs::create_dir_all("target/tmp/out_is_dir");
-        let oup = exec_target_with_in(
-            TARGET_EXE_PATH,
-            ["target/tmp/out_is_dir"],
-            b"some data" as &[u8],
-        );
+        let test_out = TestOut::new();
+        let target_path = test_out.base_dir().join("out_is_dir");
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let _ = std::fs::create_dir_all(&target_path);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"some data" as &[u8]);
         assert_eq!(oup.stdout, "");
         // on windows, it is not `Is a directory`
         #[cfg(not(windows))]
@@ -253,19 +270,23 @@ mod test_2_file {
     #[test]
     #[cfg(unix)] // This test is for unix-like systems
     fn test_write_permission_error() {
-        let dir = "target/no_write_permission";
-        let out_file = "target/no_write_permission/out.plain.txt";
-        let _ = std::fs::create_dir_all(dir);
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path_dir = test_out.base_dir().join("no_write_permission");
+        let target_path = target_path_dir.join(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let _ = std::fs::create_dir_all(&target_path_dir);
         // set read-only permission
-        let mut perms = std::fs::metadata(dir).unwrap().permissions();
+        let mut perms = std::fs::metadata(&target_path_dir).unwrap().permissions();
         let perms_bak = perms.clone();
         perms.set_readonly(true);
-        std::fs::set_permissions(dir, perms).unwrap();
+        std::fs::set_permissions(&target_path_dir, perms).unwrap();
 
-        let oup = exec_target_with_in(TARGET_EXE_PATH, [out_file], b"some data" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"some data" as &[u8]);
 
         // restore permission
-        std::fs::set_permissions(dir, perms_bak).unwrap();
+        std::fs::set_permissions(&target_path_dir, perms_bak).unwrap();
 
         assert!(oup.stderr.contains("Permission denied"));
         assert_eq!(oup.stdout, "");
@@ -274,11 +295,12 @@ mod test_2_file {
     //
     #[test]
     fn test_unsupported_file_extension() {
-        let oup = exec_target_with_in(
-            TARGET_EXE_PATH,
-            ["target/tmp/out_more2/out.unsupported"],
-            b"some data" as &[u8],
-        );
+        let test_out = TestOut::new();
+        let fnm = "out.unsupported";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"some data" as &[u8]);
         assert_eq!(oup.stdout, "some data\n");
         assert_eq!(oup.stderr, "");
         //assert!(oup.stderr.contains("unsupported file extension"));
@@ -287,53 +309,65 @@ mod test_2_file {
     //
     #[test]
     fn test_option_after_argument() {
+        let test_out = TestOut::new();
+        let fnm = "out.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/tmp/out_more3/out.plain.txt", "-V"],
+            [target_path_str, "-V"],
             b"some data" as &[u8],
         );
-        assert_eq!(oup.stdout, "aki-xtee 0.1.25\n");
         assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, version_msg!());
         assert!(oup.status.success());
     }
     //
     #[test]
     fn test_filename_with_spaces() {
-        let _ = std::fs::create_dir_all("target/tmp/out_more3");
-        let filename = "target/tmp/out_more3/file with spaces.txt";
-        let oup = exec_target_with_in(TARGET_EXE_PATH, [filename], b"some data" as &[u8]);
+        let test_out = TestOut::new();
+        let fnm = "file with spaces.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"some data" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "some data\n");
         assert!(oup.status.success());
-        let content = std::fs::read_to_string(filename).unwrap();
+        //
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "some data\n");
     }
     //
     #[test]
     fn test_file_overwrite() {
         use std::io::Write;
-        let _ = std::fs::create_dir_all("target/tmp/out_more4");
-        let filename = "target/tmp/out_more4/overwrite.txt";
+        //
+        let test_out = TestOut::new();
+        let fnm = "overwrite.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         // create a file with some initial content
-        let mut f = std::fs::File::create(filename).unwrap();
+        let mut f = std::fs::File::create(target_path_str).unwrap();
         f.write_all(b"initial content").unwrap();
         //
-        let oup = exec_target_with_in(TARGET_EXE_PATH, [filename], b"new content" as &[u8]);
+        let oup = exec_target_with_in(TARGET_EXE_PATH, [target_path_str], b"new content" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "new content\n");
         assert!(oup.status.success());
         //
-        let content = std::fs::read_to_string(filename).unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "new content\n");
     }
     //
     #[test]
     #[cfg(unix)]
     fn test_symlink() {
-        use tempfile::tempdir;
-        let temp_dir = tempdir().unwrap();
-        let out_dir = temp_dir.path().join("out_more4");
-        let _ = std::fs::create_dir_all(&out_dir);
+        let test_out = TestOut::new();
+        let out_dir = test_out.base_dir();
+        let _ = std::fs::create_dir_all(out_dir);
         let filename = out_dir.join("symlink_target.txt");
         let symlink = out_dir.join("symlink.txt");
         // create a symlink to a file
@@ -350,7 +384,6 @@ mod test_2_file {
     //
     #[test]
     fn test_file_named_dash() {
-        let _ = std::fs::create_dir_all("target/out_more5");
         let oup = exec_target_with_in(TARGET_EXE_PATH, ["-"], b"some data" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "some data\n");
@@ -396,17 +429,23 @@ mod test_2_file {
     //
     #[test]
     fn test_filename_with_special_chars() {
-        let _ = std::fs::create_dir_all("target/out_more2");
-        let filename = "target/out_more2/!@#$%^&*().txt";
+        let test_out = TestOut::new();
+        let fnm = "!@#$%^&*().txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
         //
-        let oup = exec_target_with_in(TARGET_EXE_PATH, [filename], b"special chars\n" as &[u8]);
+        let oup = exec_target_with_in(
+            TARGET_EXE_PATH,
+            [target_path_str],
+            b"special chars\n" as &[u8],
+        );
         #[cfg(not(windows))]
         {
             assert_eq!(oup.stderr, "");
             assert_eq!(oup.stdout, "special chars\n");
             assert!(oup.status.success());
             //
-            let content = std::fs::read_to_string(filename).unwrap();
+            let content = std::fs::read_to_string(target_path_str).unwrap();
             assert_eq!(content, "special chars\n");
         }
         #[cfg(windows)]
@@ -433,134 +472,178 @@ mod test_2_file {
     //
     #[test]
     fn test_append_mode() {
-        let _ = std::fs::create_dir_all("target/out_more");
-        let file_path = "target/out_more/append_test.txt";
-        std::fs::write(file_path, "initial content\n").unwrap();
+        let test_out = TestOut::new();
+        let fnm = "append_test.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
+        std::fs::write(target_path_str, "initial content\n").unwrap();
         //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-a", file_path],
+            ["-a", target_path_str],
             b"appended content\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert!(oup.status.success());
         //
-        let content = std::fs::read_to_string(file_path).unwrap();
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "initial content\nappended content\n");
     }
 }
 
 #[cfg(feature = "flate2")]
 mod test_3_file_gz {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_gz() {
+        let test_out = TestOut::new();
+        let fnm = "out.text.gz";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.text.gz"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.text.gz");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "xz2")]
 mod test_3_file_xz2 {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_xz() {
+        let test_out = TestOut::new();
+        let fnm = "out.text.xz";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.text.xz"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.text.xz");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "zstd")]
 mod test_3_file_zstd {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_zstd() {
+        let test_out = TestOut::new();
+        let fnm = "out.text.zst";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.text.zst"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.text.zst");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "lz4")]
 mod test_2_file_lz4 {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_lz4() {
+        let test_out = TestOut::new();
+        let fnm = "out.text.lz4";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.text.lz4"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.text.lz4");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 #[cfg(feature = "bzip2")]
 mod test_3_file_bzip2 {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_bzip2() {
+        let test_out = TestOut::new();
+        let fnm = "out.text.bz2";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/out020/out.text.bz2"],
+            [target_path_str],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_file_eq!("target/out020/", "fixtures/", "out.text.bz2");
+        //
+        assert!(test_out.cmp_file_with_fixtures(fnm).unwrap());
     }
 }
 
 mod test_4_complex {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_stdout_and_file_output() {
-        let _ = std::fs::create_dir_all("target/out_more");
+        let test_out = TestOut::new();
+        let fnm = "another.plain.txt";
+        let target_path = test_out.target_path(fnm);
+        let target_path_str = target_path.to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["-", "target/out_more/another.plain.txt"],
+            ["-", target_path_str],
             b"stdout and file\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "stdout and file\n");
         assert!(oup.status.success());
-        let content = std::fs::read_to_string("target/out_more/another.plain.txt").unwrap();
+        //
+        let content = std::fs::read_to_string(target_path_str).unwrap();
         assert_eq!(content, "stdout and file\n");
     }
     //
@@ -626,61 +709,73 @@ mod test_4_complex {
 #[cfg(feature = "lz4")]
 #[cfg(feature = "bzip2")]
 mod test_4_complex_more {
+    use crate::helper2::TestOut;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_multiple_files_different_compression() {
+        let test_out = TestOut::new();
+        let fnm_plain = "out.plain.txt";
+        let fnm_gz = "out.text.gz";
+        let fnm_xz = "out.text.xz";
+        let fnm_zst = "out.text.zst";
+        let fnm_lz4 = "out.text.lz4";
+        let fnm_bz2 = "out.text.bz2";
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
             [
-                "target/out021/out.plain.txt",
-                "target/out021/out.text.gz",
-                "target/out021/out.text.xz",
-                "target/out021/out.text.zst",
-                "target/out021/out.text.lz4",
-                "target/out021/out.text.bz2",
+                test_out.target_path(fnm_plain),
+                test_out.target_path(fnm_gz),
+                test_out.target_path(fnm_xz),
+                test_out.target_path(fnm_zst),
+                test_out.target_path(fnm_lz4),
+                test_out.target_path(fnm_bz2),
             ],
             b"ABCDEFG\nHIJKLMN\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ABCDEFG\nHIJKLMN\n");
         assert!(oup.status.success());
-        assert_text_file_eq!("target/out021/", "fixtures/", "out.plain.txt");
-        assert_file_eq!("target/out021/", "fixtures/", "out.text.gz");
-        assert_file_eq!("target/out021/", "fixtures/", "out.text.xz");
-        assert_file_eq!("target/out021/", "fixtures/", "out.text.zst");
-        assert_file_eq!("target/out021/", "fixtures/", "out.text.lz4");
-        assert_file_eq!("target/out021/", "fixtures/", "out.text.bz2");
+        //
+        assert!(test_out.cmp_text_file_with_fixtures(fnm_plain).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_gz).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_xz).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_zst).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_lz4).unwrap());
+        assert!(test_out.cmp_file_with_fixtures(fnm_bz2).unwrap());
     }
     //
     #[test]
+    #[ignore]
     fn test_large_input_file() {
         use std::io::Read;
-        let _ = std::fs::create_dir_all("target/out_more2");
+        let test_out = TestOut::new();
+        let fnm_plain = "out.plain.txt";
+        let fnm_gz = "out.text.gz";
+        let target_path_plain = test_out.target_path(fnm_plain);
+        let target_path_gz = test_out.target_path(fnm_gz);
+        //
         let mut input_data = Vec::new();
         let mut f = flate2::read::GzDecoder::new(std::fs::File::open(fixture_text10k!()).unwrap());
         f.read_to_end(&mut input_data).unwrap();
         //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            [
-                "target/out_more2/out.plain.txt",
-                "target/out_more2/out.text.gz",
-            ],
+            [&target_path_plain, &target_path_gz],
             &input_data,
         );
         assert_eq!(oup.stderr, "");
         assert!(oup.status.success());
         //
         // Verify plain text file
-        let content = std::fs::read("target/out_more2/out.plain.txt").unwrap();
+        let content = std::fs::read(&target_path_plain).unwrap();
         assert_eq!(content, input_data);
         //
         // Verify gz file
-        let mut gz_decoder = flate2::read::GzDecoder::new(
-            std::fs::File::open("target/out_more2/out.text.gz").unwrap(),
-        );
+        let mut gz_decoder =
+            flate2::read::GzDecoder::new(std::fs::File::open(&target_path_gz).unwrap());
         let mut s = Vec::new();
         gz_decoder.read_to_end(&mut s).unwrap();
         assert_eq!(s, input_data);
