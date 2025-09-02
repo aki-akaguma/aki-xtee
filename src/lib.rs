@@ -144,8 +144,18 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 ///         "target/out/xztext.txt.xz", "target/out/zstext.txt.zst"]);
 /// ```
 ///
-pub fn execute(sioe: &RunnelIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
-    let conf = match conf::parse_cmdopts(prog_name, args) {
+pub fn execute<I, S>(sioe: &RunnelIoe, prog_name: &str, args: I) -> anyhow::Result<()>
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<std::ffi::OsStr>,
+{
+    //let conf = match conf::parse_cmdopts(prog_name, args) {
+    let args: Vec<String> = args
+        .into_iter()
+        .map(|a| a.as_ref().to_str().unwrap().to_string())
+        .collect();
+    let args: Vec<&str> = args.iter().map(|a| a.as_str()).collect();
+    let conf = match conf::parse_cmdopts(prog_name, &args) {
         Ok(conf) => conf,
         Err(errs) => {
             for err in errs.iter().take(1) {

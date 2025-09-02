@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * more tests
 
 ### Changed
+* `IntoIterator` compatibility for args in `execute()`
 * updated: runnel(0.4.0)
 * updated: rust-version-info-file(0.2)
 

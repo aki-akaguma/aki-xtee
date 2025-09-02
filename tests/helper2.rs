@@ -147,6 +147,7 @@ where
     Ok(buf1 == buf2)
 }
 
+/*
 #[allow(unused_macros)]
 macro_rules! assert_text_file_eq {
     ($p1:expr, $p2:expr, $file_name:expr) => {
@@ -156,6 +157,7 @@ macro_rules! assert_text_file_eq {
         );
     };
 }
+*/
 
 #[allow(dead_code)]
 pub fn cmp_text_file<T1, T2>(path1: T1, path2: T2) -> std::io::Result<bool>

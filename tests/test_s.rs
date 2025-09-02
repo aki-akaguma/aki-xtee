@@ -44,35 +44,35 @@ mod test_0_s {
     //
     #[test]
     fn test_help() {
-        let (r, sioe) = do_execute!(&["-H"]);
+        let (r, sioe) = do_execute!(["-H"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_help_long() {
-        let (r, sioe) = do_execute!(&["--help"]);
+        let (r, sioe) = do_execute!(["--help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_version() {
-        let (r, sioe) = do_execute!(&["-V"]);
+        let (r, sioe) = do_execute!(["-V"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_version_long() {
-        let (r, sioe) = do_execute!(&["--version"]);
+        let (r, sioe) = do_execute!(["--version"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_invalid_opt() {
-        let (r, sioe) = do_execute!(&["-z"]);
+        let (r, sioe) = do_execute!(["-z"]);
         assert_eq!(
             buff!(sioe, serr),
             concat!(
@@ -96,7 +96,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_rust_version_info() {
-        let (r, sioe) = do_execute!(&["-X", "rust-version-info"]);
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
         assert_eq!(buff!(sioe, serr), "");
         assert!(!buff!(sioe, sout).is_empty());
         assert!(r.is_ok());
@@ -104,7 +104,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_option_help() {
-        let (r, sioe) = do_execute!(&["-X", "help"]);
+        let (r, sioe) = do_execute!(["-X", "help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert!(buff!(sioe, sout).contains("Options:"));
         assert!(buff!(sioe, sout).contains("-X rust-version-info"));
@@ -113,7 +113,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_option_rust_version_info() {
-        let (r, sioe) = do_execute!(&["-X", "rust-version-info"]);
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
         assert_eq!(buff!(sioe, serr), "");
         assert!(buff!(sioe, sout).contains("rustc"));
         assert!(r.is_ok());
@@ -121,7 +121,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_multiple_x_options() {
-        let (r, sioe) = do_execute!(&["-X", "help", "-X", "rust-version-info"]);
+        let (r, sioe) = do_execute!(["-X", "help", "-X", "rust-version-info"]);
         assert_eq!(buff!(sioe, serr), "");
         // The first one should be executed and the program should exit.
         assert!(buff!(sioe, sout).contains("Options:"));
@@ -138,7 +138,7 @@ mod test_0_x_options_s {
         let base_dir_str = base_dir.to_str().unwrap();
         //
         let (r, sioe) = do_execute!(
-            &["-X", &format!("base_dir={base_dir_str}"), fnm],
+            ["-X", &format!("base_dir={base_dir_str}"), fnm],
             "hello from base_dir\n"
         );
         assert_eq!(buff!(sioe, serr), "");
@@ -153,7 +153,7 @@ mod test_0_x_options_s {
     fn test_x_base_dir_non_existent_dir() {
         let fnm = "test_file.txt";
         let (r, sioe) = do_execute!(
-            &["-X", "base_dir=/non/existent/dir", fnm],
+            ["-X", "base_dir=/non/existent/dir", fnm],
             "hello from base_dir\n"
         );
         #[cfg(target_os = "linux")]
@@ -184,7 +184,7 @@ mod test_0_x_options_s {
         let base_dir_str = base_dir.to_str().unwrap();
         //
         let (r, sioe) = do_execute!(
-            &[
+            [
                 "-X",
                 &format!("base_dir={base_dir_str}"),
                 "non_existent_dir/non_existent_file.txt",
@@ -246,7 +246,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -263,7 +263,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "");
+        let (r, sioe) = do_execute!([target_path_str], "");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_ok());
@@ -276,7 +276,7 @@ mod test_2_file_s {
 
     #[test]
     fn test_non_existent_output_dir() {
-        let (r, sioe) = do_execute!(&["target/non_existent_dir/out.plain.txt"], "some data\n");
+        let (r, sioe) = do_execute!(["target/non_existent_dir/out.plain.txt"], "some data\n");
         //assert!(oup.stderr.contains("No such file or directory"));
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
@@ -290,7 +290,7 @@ mod test_2_file_s {
         let target_path_str = target_path.to_str().unwrap();
         //
         let _ = std::fs::create_dir_all(&target_path);
-        let (r, sioe) = do_execute!(&[target_path_str], "some data\n");
+        let (r, sioe) = do_execute!([target_path_str], "some data\n");
         #[cfg(not(windows))]
         assert!(buff!(sioe, serr).contains("Is a directory"));
         #[cfg(windows)]
@@ -315,7 +315,7 @@ mod test_2_file_s {
         perms.set_readonly(true);
         std::fs::set_permissions(&target_path_dir, perms).unwrap();
 
-        let (r, sioe) = do_execute!(&[target_path_str], "some data");
+        let (r, sioe) = do_execute!([target_path_str], "some data");
 
         // restore permission
         std::fs::set_permissions(&target_path_dir, perms_bak).unwrap();
@@ -332,7 +332,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "some data");
+        let (r, sioe) = do_execute!([target_path_str], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
         assert!(r.is_ok());
@@ -345,7 +345,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str, "-V"], "some data");
+        let (r, sioe) = do_execute!([target_path_str, "-V"], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
@@ -358,7 +358,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "some data");
+        let (r, sioe) = do_execute!([target_path_str], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
         assert!(r.is_ok());
@@ -380,7 +380,7 @@ mod test_2_file_s {
         let mut f = std::fs::File::create(target_path_str).unwrap();
         f.write_all(b"initial content").unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "new content");
+        let (r, sioe) = do_execute!([target_path_str], "new content");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "new content\n");
         assert!(r.is_ok());
@@ -400,7 +400,7 @@ mod test_2_file_s {
         // create a symlink to a file
         std::os::unix::fs::symlink(&filename, &symlink).unwrap();
         //
-        let (r, sioe) = do_execute!(&[&symlink.display().to_string()], "symlink content");
+        let (r, sioe) = do_execute!([&symlink.display().to_string()], "symlink content");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "symlink content\n");
         assert!(r.is_ok());
@@ -411,7 +411,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_file_named_dash() {
-        let (r, sioe) = do_execute!(&["-"], "some data");
+        let (r, sioe) = do_execute!(["-"], "some data");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");
         assert!(r.is_ok());
@@ -422,7 +422,7 @@ mod test_2_file_s {
     #[test]
     fn test_very_long_argument() {
         let long_arg = "a".repeat(10000);
-        let (r, sioe) = do_execute!(&[&long_arg], "some data");
+        let (r, sioe) = do_execute!([&long_arg], "some data");
         #[cfg(not(windows))]
         assert!(buff!(sioe, serr).contains("File name too long"));
         #[cfg(windows)]
@@ -462,7 +462,7 @@ mod test_2_file_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "special chars\n");
+        let (r, sioe) = do_execute!([target_path_str], "special chars\n");
         #[cfg(not(windows))]
         {
             assert_eq!(buff!(sioe, serr), "");
@@ -484,7 +484,7 @@ mod test_2_file_s {
     #[test]
     #[cfg(unix)]
     fn test_dev_null_output() {
-        let (r, sioe) = do_execute!(&["/dev/null"], "to dev null\n");
+        let (r, sioe) = do_execute!(["/dev/null"], "to dev null\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "to dev null\n");
         assert!(r.is_ok());
@@ -502,7 +502,7 @@ mod test_2_file_s {
         //
         std::fs::write(target_path_str, "initial content\n").unwrap();
         //
-        let (r, sioe) = do_execute!(&["-a", target_path_str], "appended content\n");
+        let (r, sioe) = do_execute!(["-a", target_path_str], "appended content\n");
         assert_eq!(buff!(sioe, serr), "");
         assert!(r.is_ok());
         //
@@ -526,7 +526,7 @@ mod test_3_file_gz_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -550,7 +550,7 @@ mod test_3_file_xz2_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -574,7 +574,7 @@ mod test_3_file_zstd_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -598,7 +598,7 @@ mod test_3_file_lz4_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -622,7 +622,7 @@ mod test_3_file_bzip2_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&[target_path_str], "ABCDEFG\nHIJKLMN\n");
+        let (r, sioe) = do_execute!([target_path_str], "ABCDEFG\nHIJKLMN\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ABCDEFG\nHIJKLMN\n");
         assert!(r.is_ok());
@@ -645,7 +645,7 @@ mod test_4_complex_s {
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
         //
-        let (r, sioe) = do_execute!(&["-", target_path_str], "stdout and file\n");
+        let (r, sioe) = do_execute!(["-", target_path_str], "stdout and file\n");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "stdout and file\n");
         assert!(r.is_ok());
@@ -701,13 +701,13 @@ mod test_4_complex_more_s {
         let fnm_bz2 = "out.text.bz2";
         //
         let (r, sioe) = do_execute!(
-            &[
-                test_out.target_path(fnm_plain).to_str().unwrap(),
-                test_out.target_path(fnm_gz).to_str().unwrap(),
-                test_out.target_path(fnm_xz).to_str().unwrap(),
-                test_out.target_path(fnm_zst).to_str().unwrap(),
-                test_out.target_path(fnm_lz4).to_str().unwrap(),
-                test_out.target_path(fnm_bz2).to_str().unwrap(),
+            [
+                test_out.target_path(fnm_plain),
+                test_out.target_path(fnm_gz),
+                test_out.target_path(fnm_xz),
+                test_out.target_path(fnm_zst),
+                test_out.target_path(fnm_lz4),
+                test_out.target_path(fnm_bz2),
             ],
             "ABCDEFG\nHIJKLMN\n"
         );
@@ -738,13 +738,7 @@ mod test_4_complex_more_s {
         f.read_to_end(&mut input_data).unwrap();
         let s = String::from_utf8_lossy(&input_data).to_string();
         //
-        let (r, sioe) = do_execute!(
-            &[
-                target_path_plain.to_str().unwrap(),
-                target_path_gz.to_str().unwrap(),
-            ],
-            &s
-        );
+        let (r, sioe) = do_execute!([&target_path_plain, &target_path_gz,], &s);
         assert_eq!(buff!(sioe, serr), "");
         assert!(r.is_ok());
         //
