@@ -118,7 +118,6 @@ mod util;
 
 use flood_tide::HelpVersion;
 use runnel::*;
-use std::io::Write;
 
 const TRY_HELP_MSG: &str = "Try --help for help.";
 
@@ -126,7 +125,7 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// execute xcat
 ///
 /// params:
-///   - sioe: stream in/out/err
+///   -sioe: stream in/out/err
 ///   - program: program name. etc. "xcat"
 ///   - args: parameter arguments.
 ///
@@ -151,21 +150,19 @@ where
 {
     let args: Vec<String> = args
         .into_iter()
-        .map(|a| a.as_ref().to_str().unwrap().to_string())
+        .map(|s| s.as_ref().to_string_lossy().into_owned())
         .collect();
-    let args: Vec<&str> = args.iter().map(|a| a.as_str()).collect();
+    let args_str: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
     //
-    let conf = match conf::parse_cmdopts(prog_name, &args) {
-        Ok(conf) => conf,
+    match conf::parse_cmdopts(prog_name, &args_str) {
+        Ok(conf) => run::run(sioe, &conf),
         Err(errs) => {
-            for err in errs.iter().take(1) {
-                if err.is_help() || err.is_version() {
-                    let _r = sioe.pg_out().lock().write_fmt(format_args!("{err}\n"));
-                    return Ok(());
-                }
+            if let Some(err) = errs.iter().find(|e| e.is_help() || e.is_version()) {
+                sioe.pg_out().write_line(err.to_string())?;
+                Ok(())
+            } else {
+                Err(anyhow!("{errs}\n{TRY_HELP_MSG}"))
             }
-            return Err(anyhow!("{}\n{}", errs, TRY_HELP_MSG));
         }
-    };
-    run::run(sioe, &conf)
+    }
 }
