@@ -276,7 +276,13 @@ mod test_2_file_s {
 
     #[test]
     fn test_non_existent_output_dir() {
-        let (r, sioe) = do_execute!(["target/non_existent_dir/out.plain.txt"], "some data\n");
+        let test_out = TestOut::new();
+        let out_dir = test_out.base_dir().to_str().unwrap();
+        //
+        let (r, sioe) = do_execute!(
+            [format!("{out_dir}/non_existent_dir/out.plain.txt")],
+            "some data\n"
+        );
         //assert!(oup.stderr.contains("No such file or directory"));
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "some data\n");

@@ -73,29 +73,11 @@ macro_rules! fixture_invalid_utf8 {
     };
 }
 
-/*
-#[allow(unused_macros)]
-macro_rules! assert_file_eq {
-    ($p1:expr, $p2:expr, $file_name:expr) => {
-        assert_eq!(
-            crate::cmp_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
-            true
-        );
-    };
-}
-*/
-
-#[allow(unused_macros)]
-macro_rules! test_out_dir {
-    () => {
-        "target/out"
-    };
-}
-
 #[allow(dead_code)]
 pub struct TestOut {
     base_dir: tempfile::TempDir,
 }
+
 #[allow(dead_code)]
 impl TestOut {
     pub fn new() -> Self {
@@ -124,6 +106,7 @@ impl TestOut {
         )
     }
 }
+
 #[allow(dead_code)]
 impl Default for TestOut {
     fn default() -> Self {
@@ -146,18 +129,6 @@ where
     f2.read_to_end(&mut buf2)?;
     Ok(buf1 == buf2)
 }
-
-/*
-#[allow(unused_macros)]
-macro_rules! assert_text_file_eq {
-    ($p1:expr, $p2:expr, $file_name:expr) => {
-        assert_eq!(
-            crate::cmp_text_file(concat!($p1, $file_name), concat!($p2, $file_name)).unwrap(),
-            true
-        );
-    };
-}
-*/
 
 #[allow(dead_code)]
 pub fn cmp_text_file<T1, T2>(path1: T1, path2: T2) -> std::io::Result<bool>

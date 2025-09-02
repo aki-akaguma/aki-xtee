@@ -238,9 +238,12 @@ mod test_2_file {
     //
     #[test]
     fn test_non_existent_output_dir() {
+        let test_out = TestOut::new();
+        let out_dir = test_out.base_dir().to_str().unwrap();
+        //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
-            ["target/non_existent_dir/out.plain.txt"],
+            [&format!("{out_dir}/non_existent_dir/out.plain.txt")],
             b"some data" as &[u8],
         );
         //assert!(oup.stderr.contains("No such file or directory"));

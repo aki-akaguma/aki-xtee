@@ -140,7 +140,7 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// use runnel::RunnelIoeBuilder;
 ///
 /// let r = libaki_xtee::execute(&RunnelIoeBuilder::new().build(),
-///     "xtee", &["target/out/plain.txt", "target/out/gztext.txt.gz",
+///     "xtee", ["target/out/plain.txt", "target/out/gztext.txt.gz",
 ///         "target/out/xztext.txt.xz", "target/out/zstext.txt.zst"]);
 /// ```
 ///
@@ -149,12 +149,12 @@ where
     I: IntoIterator<Item = S>,
     S: AsRef<std::ffi::OsStr>,
 {
-    //let conf = match conf::parse_cmdopts(prog_name, args) {
     let args: Vec<String> = args
         .into_iter()
         .map(|a| a.as_ref().to_str().unwrap().to_string())
         .collect();
     let args: Vec<&str> = args.iter().map(|a| a.as_str()).collect();
+    //
     let conf = match conf::parse_cmdopts(prog_name, &args) {
         Ok(conf) => conf,
         Err(errs) => {
