@@ -1,46 +1,13 @@
-#[rustfmt::skip]
-macro_rules! do_execute {
-    ($args:expr) => {
-        do_execute!($args, "")
-    };
-    ($args:expr, $sin:expr) => {{
-        let sioe = RunnelIoe::new(
-            Box::new(StringIn::with_str($sin)),
-            #[allow(clippy::box_default)]
-            Box::new(StringOut::default()),
-            #[allow(clippy::box_default)]
-            Box::new(StringErr::default()),
-        );
-        let program = env!("CARGO_PKG_NAME");
-        let r = execute(&sioe, &program, $args);
-        match r {
-            Ok(_) => {}
-            Err(ref err) => {
-                let _ = sioe.pg_err().lock()
-                .write_fmt(format_args!("{}: {:#}\n", program, err));
-            }
-        };
-        (r, sioe)
-    }};
-}
-
-macro_rules! buff {
-    ($sioe:expr, serr) => {
-        $sioe.pg_err().lock().buffer_to_string()
-    };
-    ($sioe:expr, sout) => {
-        $sioe.pg_out().lock().buffer_to_string()
-    };
-}
+#[macro_use]
+mod helper;
 
 #[macro_use]
-mod helper2;
+mod helper_l;
 
-mod test_0_s {
+mod test_0_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::*;
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_help() {
@@ -87,27 +54,16 @@ mod test_0_s {
     }
 }
 
-mod test_0_x_options_s {
-    use crate::helper2::TestOut;
+mod test_0_x_options_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::*;
     use runnel::*;
-    use std::io::Write;
-    //
-    #[test]
-    fn test_x_rust_version_info() {
-        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
-        assert_eq!(buff!(sioe, serr), "");
-        assert!(!buff!(sioe, sout).is_empty());
-        assert!(r.is_ok());
-    }
     //
     #[test]
     fn test_x_option_help() {
         let (r, sioe) = do_execute!(["-X", "help"]);
         assert_eq!(buff!(sioe, serr), "");
-        assert!(buff!(sioe, sout).contains("Options:"));
-        assert!(buff!(sioe, sout).contains("-X rust-version-info"));
+        assert_eq!(buff!(sioe, sout), x_help_msg!());
         assert!(r.is_ok());
     }
     //
@@ -131,7 +87,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_base_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "test_file.txt";
         let target_path = test_out.target_path(fnm);
         let base_dir = test_out.base_dir();
@@ -179,7 +135,7 @@ mod test_0_x_options_s {
     //
     #[test]
     fn test_x_base_dir_non_existent_file() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let base_dir = test_out.base_dir();
         let base_dir_str = base_dir.to_str().unwrap();
         //
@@ -197,11 +153,10 @@ mod test_0_x_options_s {
     }
 }
 
-mod test_1_stdout_s {
+mod test_1_stdout_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_non_option() {
@@ -211,17 +166,11 @@ mod test_1_stdout_s {
         assert!(r.is_ok());
     }
     //
-    /*
     #[test]
     fn test_invalid_utf8() {
-        let v = {
-            use std::io::Read;
-            let mut f = std::fs::File::open(fixture_invalid_utf8!()).unwrap();
-            let mut v = Vec::new();
-            f.read_to_end(&mut v).unwrap();
-            v
-        };
-        let (r, sioe) = do_execute!(&[] as &[&str], &v);
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
+        let s = unsafe { String::from_utf8_unchecked(v) };
+        let (r, sioe) = do_execute!(&[] as &[&str], &s);
         assert_eq!(
             buff!(sioe, serr),
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
@@ -229,19 +178,16 @@ mod test_1_stdout_s {
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
     }
-    */
 }
 
-mod test_2_file_s {
-    use crate::helper2::TestOut;
+mod test_2_file_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_plain() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -258,7 +204,7 @@ mod test_2_file_s {
     fn test_empty_input() {
         use std::io::Read;
         //
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -276,7 +222,7 @@ mod test_2_file_s {
 
     #[test]
     fn test_non_existent_output_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let out_dir = test_out.base_dir().to_str().unwrap();
         //
         let (r, sioe) = do_execute!(
@@ -291,7 +237,7 @@ mod test_2_file_s {
 
     #[test]
     fn test_output_path_is_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let target_path = test_out.base_dir().join("out_is_dir");
         let target_path_str = target_path.to_str().unwrap();
         //
@@ -308,7 +254,7 @@ mod test_2_file_s {
     #[test]
     #[cfg(unix)] // This test is for unix-like systems
     fn test_write_permission_error() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path_dir = test_out.base_dir().join("no_write_permission");
         let target_path = target_path_dir.join(fnm);
@@ -333,7 +279,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_unsupported_file_extension() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.unsupported";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -346,7 +292,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_option_after_argument() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -359,7 +305,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_filename_with_spaces() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "file with spaces.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -377,7 +323,7 @@ mod test_2_file_s {
     fn test_file_overwrite() {
         use std::io::Write;
         //
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "overwrite.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -398,7 +344,7 @@ mod test_2_file_s {
     #[test]
     #[cfg(unix)]
     fn test_symlink() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let out_dir = test_out.base_dir();
         let _ = std::fs::create_dir_all(out_dir);
         let filename = out_dir.join("symlink_target.txt");
@@ -463,7 +409,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_filename_with_special_chars() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "!@#$%^&*().txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -501,7 +447,7 @@ mod test_2_file_s {
     //
     #[test]
     fn test_append_mode() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "append_test.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -518,16 +464,14 @@ mod test_2_file_s {
 }
 
 #[cfg(feature = "flate2")]
-mod test_3_file_gz_s {
-    use crate::helper2::TestOut;
+mod test_3_file_gz_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_gz() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.gz";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -542,16 +486,14 @@ mod test_3_file_gz_s {
 }
 
 #[cfg(feature = "xz2")]
-mod test_3_file_xz2_s {
-    use crate::helper2::TestOut;
+mod test_3_file_xz2_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_xz() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.xz";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -566,16 +508,14 @@ mod test_3_file_xz2_s {
 }
 
 #[cfg(feature = "zstd")]
-mod test_3_file_zstd_s {
-    use crate::helper2::TestOut;
+mod test_3_file_zstd_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_zstd() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.zst";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -590,16 +530,14 @@ mod test_3_file_zstd_s {
 }
 
 #[cfg(feature = "lz4")]
-mod test_3_file_lz4_s {
-    use crate::helper2::TestOut;
+mod test_3_file_lz4_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_lz4() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.lz4";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -614,16 +552,14 @@ mod test_3_file_lz4_s {
 }
 
 #[cfg(feature = "bzip2")]
-mod test_3_file_bzip2_s {
-    use crate::helper2::TestOut;
+mod test_3_file_bzip2_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_bzip2() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.bz2";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -637,16 +573,14 @@ mod test_3_file_bzip2_s {
     }
 }
 
-mod test_4_complex_s {
-    use crate::helper2::TestOut;
+mod test_4_complex_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_stdout_and_file_output() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "another.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -689,16 +623,14 @@ mod test_4_complex_s {
 #[cfg(feature = "zstd")]
 #[cfg(feature = "lz4")]
 #[cfg(feature = "bzip2")]
-mod test_4_complex_more_s {
-    use crate::helper2::TestOut;
+mod test_4_complex_more_l {
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_multiple_files_different_compression() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm_plain = "out.plain.txt";
         let fnm_gz = "out.text.gz";
         let fnm_xz = "out.text.xz";
@@ -733,7 +665,7 @@ mod test_4_complex_more_s {
     #[ignore]
     fn test_large_input_file() {
         use std::io::Read;
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm_plain = "out.plain.txt";
         let fnm_gz = "out.text.gz";
         let target_path_plain = test_out.target_path(fnm_plain);
@@ -762,11 +694,10 @@ mod test_4_complex_more_s {
 }
 
 /*
-mod test_5_s {
+mod test_5_l {
     /*
     use libaki_xtee::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use std::io::Write;
     //
      * can NOT test
     #[test]

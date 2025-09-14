@@ -1,9 +1,12 @@
 const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
 
 #[macro_use]
-mod helper2;
+mod helper;
 
-mod test_0 {
+#[macro_use]
+mod helper_e;
+
+mod test_0_e {
     use exec_target::exec_target;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
@@ -53,8 +56,7 @@ mod test_0 {
     }
 }
 
-mod test_0_x_options {
-    use crate::helper2::TestOut;
+mod test_0_x_options_e {
     use exec_target::exec_target;
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
@@ -63,8 +65,7 @@ mod test_0_x_options {
     fn test_x_option_help() {
         let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
         assert_eq!(oup.stderr, "");
-        assert!(oup.stdout.contains("Options:"));
-        assert!(oup.stdout.contains("-X rust-version-info"));
+        assert_eq!(oup.stdout, x_help_msg!());
         assert!(oup.status.success());
     }
     //
@@ -88,7 +89,7 @@ mod test_0_x_options {
     //
     #[test]
     fn test_x_base_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "test_file.txt";
         let target_path = test_out.target_path(fnm);
         let base_dir = test_out.base_dir();
@@ -142,7 +143,7 @@ mod test_0_x_options {
     //
     #[test]
     fn test_x_base_dir_non_existent_file() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let base_dir = test_out.base_dir();
         let base_dir_str = base_dir.to_str().unwrap();
         //
@@ -161,7 +162,7 @@ mod test_0_x_options {
     }
 }
 
-mod test_1_stdout {
+mod test_1_stdout_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -175,13 +176,7 @@ mod test_1_stdout {
     //
     #[test]
     fn test_invalid_utf8() {
-        let v = {
-            use std::io::Read;
-            let mut f = std::fs::File::open(fixture_invalid_utf8!()).unwrap();
-            let mut v = Vec::new();
-            f.read_to_end(&mut v).unwrap();
-            v
-        };
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
         let oup = exec_target_with_in(TARGET_EXE_PATH, &[] as &[&str], &v);
         assert_eq!(
             oup.stderr,
@@ -192,14 +187,13 @@ mod test_1_stdout {
     }
 }
 
-mod test_2_file {
-    use crate::helper2::TestOut;
+mod test_2_file_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_plain() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -220,7 +214,7 @@ mod test_2_file {
     fn test_empty_input() {
         use std::io::Read;
         //
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -238,7 +232,7 @@ mod test_2_file {
     //
     #[test]
     fn test_non_existent_output_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let out_dir = test_out.base_dir().to_str().unwrap();
         //
         let oup = exec_target_with_in(
@@ -254,7 +248,7 @@ mod test_2_file {
     //
     #[test]
     fn test_output_path_is_dir() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let target_path = test_out.base_dir().join("out_is_dir");
         let target_path_str = target_path.to_str().unwrap();
         //
@@ -273,7 +267,7 @@ mod test_2_file {
     #[test]
     #[cfg(unix)] // This test is for unix-like systems
     fn test_write_permission_error() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path_dir = test_out.base_dir().join("no_write_permission");
         let target_path = target_path_dir.join(fnm);
@@ -298,7 +292,7 @@ mod test_2_file {
     //
     #[test]
     fn test_unsupported_file_extension() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.unsupported";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -312,7 +306,7 @@ mod test_2_file {
     //
     #[test]
     fn test_option_after_argument() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -329,7 +323,7 @@ mod test_2_file {
     //
     #[test]
     fn test_filename_with_spaces() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "file with spaces.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -347,7 +341,7 @@ mod test_2_file {
     fn test_file_overwrite() {
         use std::io::Write;
         //
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "overwrite.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -368,7 +362,7 @@ mod test_2_file {
     #[test]
     #[cfg(unix)]
     fn test_symlink() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let out_dir = test_out.base_dir();
         let _ = std::fs::create_dir_all(out_dir);
         let filename = out_dir.join("symlink_target.txt");
@@ -432,7 +426,7 @@ mod test_2_file {
     //
     #[test]
     fn test_filename_with_special_chars() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "!@#$%^&*().txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -475,7 +469,7 @@ mod test_2_file {
     //
     #[test]
     fn test_append_mode() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "append_test.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -496,14 +490,13 @@ mod test_2_file {
 }
 
 #[cfg(feature = "flate2")]
-mod test_3_file_gz {
-    use crate::helper2::TestOut;
+mod test_3_file_gz_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_gz() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.gz";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -522,14 +515,13 @@ mod test_3_file_gz {
 }
 
 #[cfg(feature = "xz2")]
-mod test_3_file_xz2 {
-    use crate::helper2::TestOut;
+mod test_3_file_xz2_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_xz() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.xz";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -548,14 +540,13 @@ mod test_3_file_xz2 {
 }
 
 #[cfg(feature = "zstd")]
-mod test_3_file_zstd {
-    use crate::helper2::TestOut;
+mod test_3_file_zstd_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_zstd() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.zst";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -574,14 +565,13 @@ mod test_3_file_zstd {
 }
 
 #[cfg(feature = "lz4")]
-mod test_2_file_lz4 {
-    use crate::helper2::TestOut;
+mod test_2_file_lz4_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_lz4() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.lz4";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -600,14 +590,13 @@ mod test_2_file_lz4 {
 }
 
 #[cfg(feature = "bzip2")]
-mod test_3_file_bzip2 {
-    use crate::helper2::TestOut;
+mod test_3_file_bzip2_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_bzip2() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "out.text.bz2";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -625,14 +614,13 @@ mod test_3_file_bzip2 {
     }
 }
 
-mod test_4_complex {
-    use crate::helper2::TestOut;
+mod test_4_complex_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_stdout_and_file_output() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm = "another.plain.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
@@ -711,14 +699,13 @@ mod test_4_complex {
 #[cfg(feature = "zstd")]
 #[cfg(feature = "lz4")]
 #[cfg(feature = "bzip2")]
-mod test_4_complex_more {
-    use crate::helper2::TestOut;
+mod test_4_complex_more_e {
     use exec_target::exec_target_with_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
     #[test]
     fn test_multiple_files_different_compression() {
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm_plain = "out.plain.txt";
         let fnm_gz = "out.text.gz";
         let fnm_xz = "out.text.xz";
@@ -754,7 +741,7 @@ mod test_4_complex_more {
     #[ignore]
     fn test_large_input_file() {
         use std::io::Read;
-        let test_out = TestOut::new();
+        let test_out = crate::helper::TestOut::new();
         let fnm_plain = "out.plain.txt";
         let fnm_gz = "out.text.gz";
         let target_path_plain = test_out.target_path(fnm_plain);
@@ -785,7 +772,7 @@ mod test_4_complex_more {
     }
 }
 
-mod test_5 {
+mod test_5_e {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //

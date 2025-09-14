@@ -39,6 +39,22 @@ macro_rules! help_msg {
 }
 
 #[allow(unused_macros)]
+macro_rules! x_help_msg {
+    () => {
+        concat!(
+            indoc::indoc!(
+                r#"
+            Options:
+              -X rust-version-info     display rust version info and exit
+              -X base_dir=<path>       set <path> is base directory
+            "#
+            ),
+            "\n",
+        )
+    };
+}
+
+#[allow(unused_macros)]
 macro_rules! try_help_msg {
     () => {
         "Try --help for help.\n"
@@ -60,16 +76,16 @@ macro_rules! version_msg {
 }
 
 #[allow(unused_macros)]
-macro_rules! fixture_text10k {
+macro_rules! fixture_invalid_utf8 {
     () => {
-        "fixtures/text10k.text.gz"
+        "fixtures/invalid_utf8.txt"
     };
 }
 
 #[allow(unused_macros)]
-macro_rules! fixture_invalid_utf8 {
+macro_rules! fixture_text10k {
     () => {
-        "fixtures/invalid_utf8.txt"
+        "fixtures/text10k.text.gz"
     };
 }
 

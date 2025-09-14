@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * support of option: `-X base_dir=dir`
 * append mode: `-a file`
 * more tests
+* invalid utf8 input test
 
 ### Changed
 * `IntoIterator` compatibility for args in `execute()`
