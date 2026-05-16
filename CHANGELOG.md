@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * update crate: runnel(0.4.2)
 
+### Fixed
+* `clippy::needless_borrow`
+
 ### Removed
 * `memx-cdy`
 
