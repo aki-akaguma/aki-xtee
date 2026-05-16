@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+* patch crate: getrandom(0.3.4)
 * update crate: runnel(0.4.2)
 
 ### Fixed
