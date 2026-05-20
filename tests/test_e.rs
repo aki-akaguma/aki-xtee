@@ -642,7 +642,7 @@ mod test_4_complex_e {
     #[test]
     fn test_piping_to_wc() {
         use exec_target::exec_target;
-        let cmd_str = format!("echo \"hello world\" | {} | wc -c", TARGET_EXE_PATH);
+        let cmd_str = format!("echo \"hello world\" | {TARGET_EXE_PATH} | wc -c");
         let oup = exec_target("sh", ["-c", &cmd_str]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout.trim(), "12");
@@ -654,7 +654,7 @@ mod test_4_complex_e {
     fn test_piping_to_grep() {
         use exec_target::exec_target;
         let input = "hello\nworld\nhello again";
-        let cmd_str = format!("echo \"{}\" | {} | grep hello", input, TARGET_EXE_PATH);
+        let cmd_str = format!("echo \"{input}\" | {TARGET_EXE_PATH} | grep hello");
         let oup = exec_target("sh", ["-c", &cmd_str]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "hello\nhello again\n");
