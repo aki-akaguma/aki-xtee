@@ -112,7 +112,7 @@ fn make_output(path_string: &str, is_append: bool) -> anyhow::Result<Box<dyn Fin
         }
         #[cfg(not(feature = "xz2"))]
         {
-            bail!("not support '.xy' by compile option");
+            bail!("not support '.xz' by compile option");
         }
     } else if path_string.ends_with(".zst") {
         #[cfg(feature = "zstd")]

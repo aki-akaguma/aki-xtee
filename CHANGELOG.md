@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * update crate: runnel(0.4.2)
 
 ### Fixed
+* Correct typo in error message for unsupported `.xz` files.
 * `clippy::uninlined-format-args`
 * `clippy::needless_borrow`
 
