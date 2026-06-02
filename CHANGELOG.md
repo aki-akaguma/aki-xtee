@@ -2,248 +2,301 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Added
-* Added code review report `docs/reviews/2026-06-02_code_review.2.md`
+- Code review report `docs/reviews/2026-06-02_code_review.2.md`
 
 ### Changed
-* Organize review files into `docs/reviews/`
+- Organize review files into `docs/reviews/`
 
 ### Fixed
-* Append mode (`-a`) now correctly creates the file if it does not exist.
-* Refactor compression wrappers for better ownership management.
+- Creation of file in append mode (`-a`) if it does not exist
+- Ownership management in compression wrappers
 
 ### Removed
-* Remove the unimplemented `-p` (pipe-out) option.
+- Unimplemented `-p` (pipe-out) option
 
 
-## [0.2.1] (2026-05-20)
+## [0.2.1] - 2026-05-20
+
 ### Changed
-* update crate: flood-tide(0.2.14), flood-tide-gen(0.2.2)
-* patch crate: getrandom(0.3.4)
-* update crate: runnel(0.4.2)
+- Update `flood-tide` to 0.2.14, `flood-tide-gen` to 0.2.2
+- Patch `getrandom` to 0.3.4
+- Update `runnel` to 0.4.2
 
 ### Fixed
-* Correct typo in error message for unsupported `.xz` files.
-* `clippy::uninlined-format-args`
-* `clippy::needless_borrow`
+- Typo in error message for unsupported `.xz` files
+- Clippy lint: `uninlined-format-args`
+- Clippy lint: `needless_borrow`
 
 ### Removed
-* `memx-cdy`
+- `memx-cdy` dependency
 
-## [0.2.0] (2025-09-15)
+
+## [0.2.0] - 2025-09-15
+
 ### Added
-* bzip2 supports
-* lz4 supports
-* `specs`
-* support of option: `-X base_dir=dir`
-* append mode: `-a file`
-* more tests
-* invalid utf8 input test
+- Support for `bzip2`
+- Support for `lz4`
+- Specifications documentation in `specs/`
+- Support for `-X base_dir=dir` option
+- Append mode via `-a file` option
+- Additional tests
+- Test case for invalid UTF-8 input
 
 ### Changed
-* `IntoIterator` compatibility for args in `execute()`
-* updated: runnel(0.4.0)
-* updated: rust-version-info-file(0.2)
+- Compatibility for `IntoIterator` in `execute()` arguments
+- Update `runnel` to 0.4.0
+- Update `rust-version-info-file` to 0.2
 
 ### Fixed
-* rust-version: "1.75.0"
+- Set `rust-version` to 1.75.0
 
-## [0.1.25] (2024-06-19)
+
+## [0.1.25] - 2024-06-19
+
 ### Added
-* `.github/workflows/test-ubuntu.yml`
-* `.github/workflows/test-macos.yml`
-* `.github/workflows/test-windows.yml`
-* test status badges into `README.tpl`
-* miri supports on tests
-* `tarpaulin` supports into `Makefile`
+- GitHub Actions workflows for Ubuntu, macOS, and Windows
+- Test status badges to `README.tpl`
+- Miri support for tests
+- Tarpaulin support in `Makefile`
 
 ### Changed
-* rename: `config` to `config.toml`
-* remove: `cfg(has_not_matches)`
-* rust-version: "1.60.0" to "1.65.0"
-* refactored `Makefile`
-* update depends: flood-tide(0.2.11), flood-tide-gen(0.1.22)
-* update depends: memx-cdy(0.1.13), runnel(0.3.19)
-* update depends: exec-taget(0.2.9), indoc(2.0.5), rust-version-info-file(0.1.10)
-* update depends: zstd(0.13.1)
-* rename `fixtures/text10k.txt.gz` to `fixtures/text10k.text.gz`
+- Rename `config` to `config.toml`
+- Remove `cfg(has_not_matches)`
+- Update `rust-version` from 1.60.0 to 1.65.0
+- Refactor `Makefile`
+- Update dependencies: `flood-tide` (0.2.11), `flood-tide-gen` (0.1.22)
+- Update dependencies: `memx-cdy` (0.1.13), `runnel` (0.3.19)
+- Update dependencies: `exec-target` (0.2.9), `indoc` (2.0.5), `rust-version-info-file` (0.1.10)
+- Update dependencies: `zstd` (0.13.1)
+- Rename `fixtures/text10k.txt.gz` to `fixtures/text10k.text.gz`
+
+### Fixed
+- License files (`LICENSE-APACHE`, `LICENSE-MIT`)
+- Clippy lints: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
+- Clippy lints: `uninlined_format_args`, `unused_imports`, `dead_code`, `derivable_impls`
+- Update `rust-version` from 1.56.0 to 1.60.0
+- File comparison on Windows
+- Fix `zcat` issue on macOS by using `gzcat`
 
 ### Removed
-* `COPYING`
+- `COPYING` file
+
+
+## [0.1.24] - 2023-01-11
+
+### Added
+- Badges to `README.tpl`
+- `rust-version = "1.56.0"` to `Cargo.toml`
+
+### Changed
+- Reformat `CHANGELOG.md`
+- Update `anyhow` to 1.0.68
+- Update `flood-tide` (0.2.8), `flood-tide-gen` (0.1.19)
+- Update `memx-cdy` (0.1.10), `runnel` (0.3.15)
+- Update `flate2` (1.0.25), `xz2` (0.1.7)
+- Update `zstd` to 0.12.1+zstd.1.5.2
 
 ### Fixed
-* `LICENSE-APACHE`, `LICENSE-MIT`
-* license files
-* clippy: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`
-* clippy: `uninlined_format_args`, `unused_imports`, `dead_code`, `derivable_impls`
-* rust-version: "1.56.0" to "1.60.0"
-* bug: file compare on windows
-* bug: on macos:
-  - zcat: can't stat: fixtures/text10k.text.gz (fixtures/text10k.text.gz.Z): No such file or directory
-  must be used `gzcat` on macos
+- Clippy lint: implement `Eq` when deriving `PartialEq`
+- Clippy lint: `uninlined_format_args`
 
-## [0.1.24] (2023-01-11)
-### Added
-* badges into `README.tpl`
-* rust-version = "1.56.0" into Cargo.toml
 
-### Changed
-* reformat `CHANGELOG.md`
-* update depends: anyhow(1.0.68)
-* update depends: flood-tide(0.2.8), flood-tide-gen(0.1.19)
-* update depends: memx-cdy(0.1.10), runnel(0.3.15)
-* update depends: flate2(1.0.25), xz2(0.1.7)
-* update depends: zstd(0.12.1+zstd.1.5.2)
+## [0.1.23] - 2022-06-18
 
 ### Fixed
-* clippy: you are deriving `PartialEq` and can implement `Eq`
-* clippy: uninlined_format_args
+- Git log entry
 
-## [0.1.23] (2022-06-18)
-### Fixed
-* fix git log
 
-## [0.1.22] (2022-06-18)
-### Fixed
-* bug: README.md
-
-## [0.1.21] (2022-06-18)
-### Changed
-* changes to edition 2021
-* update depends: cfg-iif(0.2.3), flood-tide(0.2.5), linux-procfs(0.3.11)
-* update depends: memx(0.1.21), memx-cdy(0.1.8), naive_opt(0.1.18), runnel(0.3.11)
-* update depends: assert-text(0.2.6), exec-target(v0.2.6), flood-tide-gen(0.1.16)
-* update depends: rust-version-info-file(v0.1.6)
-* update depends: semver(1.0.10)
-* update depends: flate2(1.0.24), lzma-sys(0.1.19), miniz_oxide(0.5.3), xz2(0.1.7)
-
-## [0.1.20] (2022-05-22)
-### Changed
-* update depends: zstd(0.11.2+zstd.1.5.2)
-
-## [0.1.19] (2022-05-22)
-### Changed
-* update depends: runnel(0.3.10), memx(0.1.20)
-* update depends: anyhow(1.0.57), libc(0.2.126), regex(1.5.6)
-* update depends: flate2(1.0.23), lz4(1.23.3), zstd(0.9.2+zstd.1.5.1)
-* update depends: exec-target(v0.2.5), rust-version-info-file(v0.1.5)
-
-## [0.1.18] (2021-11-15)
-### Added
-* more documents
-
-## [0.1.17] (2021-11-15)
-### Changed
-* minimum support rustc 1.51.0 (2fd73fabe 2021-03-23)
-
-## [0.1.16] (2021-11-15)
-### Added
-* more documents
-
-### Changed
-* minimum support rustc 1.47.0 (18bf6b4f0 2020-10-07)
-* update depends: flood-tide(0.2.4), memx(0.1.18), memx-cdy(0.1.7), runnel(0.3.9)
-* update depends: anyhow(1.0.45), cc(1.0.72), flate2(v1.0.22), libc(0.2.107), pkg-config(0.3.22)
-* update depends: exec-target(v0.2.4), flood-tide-gen(0.1.15), rust-version-info-file(v0.1.3)
-
-## [0.1.15] (2021-09-11)
-### Changed
-* update crates: flate2(1.0.21)
-
-## [0.1.14] (2021-09-11)
-### Added
-* depends: indoc(1.0.3)
-
-### Changed
-* pass cargo clippy
-* update depends: anyhow(1.0.43), flood-tide-gen(0.1.14), flood-tide(0.2.3), memx-cdy(0.1.6), runnel(0.3.8)
-* rewite TARGET_EXE_PATH with `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))`
-* update depends: exec-target(0.2.3)
-
-## [0.1.13] (2021-06-24)
-### Added
-* `memx_cdy::memx_init(); // fast mem operation.`
-
-### Changed
-* rewite TARGET_EXE_PATH with `env!("CARGO_BIN_EXE_aki-xtree")`
-* update depends: zstd(0.9.0+zstd.1.5.0)
+## [0.1.22] - 2022-06-18
 
 ### Fixed
-* bug: `#[cfg(feature = "debian_build")]`
+- Issue in `README.md`
 
-## [0.1.12] (2021-06-06)
+
+## [0.1.21] - 2022-06-18
+
 ### Changed
-* update depends: zstd(0.8.3+zstd.1.5.0)
+- Migrate to Rust 2021 edition
+- Update dependencies: `cfg-iif` (0.2.3), `flood-tide` (0.2.5), `linux-procfs` (0.3.11)
+- Update dependencies: `memx` (0.1.21), `memx-cdy` (0.1.8), `naive_opt` (0.1.18), `runnel` (0.3.11)
+- Update dependencies: `assert-text` (0.2.6), `exec-target` (v0.2.6), `flood-tide-gen` (0.1.16)
+- Update dependencies: `rust-version-info-file` (v0.1.6)
+- Update dependencies: `semver` (1.0.10)
+- Update dependencies: `flate2` (1.0.24), `lzma-sys` (0.1.19), `miniz_oxide` (0.5.3), `xz2` (0.1.7)
 
-## [0.1.11] (2021-06-03)
+
+## [0.1.20] - 2022-05-22
+
+### Changed
+- Update `zstd` to 0.11.2+zstd.1.5.2
+
+
+## [0.1.19] - 2022-05-22
+
+### Changed
+- Update `runnel` (0.3.10), `memx` (0.1.20)
+- Update `anyhow` (1.0.57), `libc` (0.2.126), `regex` (1.5.6)
+- Update `flate2` (1.0.23), `lz4` (1.23.3), `zstd` (0.9.2+zstd.1.5.1)
+- Update dependencies: `exec-target` (v0.2.5), `rust-version-info-file` (v0.1.5)
+
+
+## [0.1.18] - 2021-11-15
+
 ### Added
-* support `features = \["debian_build"\]`
+- Additional documentation
+
+
+## [0.1.17] - 2021-11-15
 
 ### Changed
-* update depends: flood-tide(0.2.2)
-* update depends: regex(1.5.4)
+- Set minimum supported Rust version to 1.51.0
+
+
+## [0.1.16] - 2021-11-15
+
+### Added
+- Additional documentation
+
+### Changed
+- Set minimum supported Rust version to 1.47.0
+- Update dependencies: `flood-tide` (0.2.4), `memx` (0.1.18), `memx-cdy` (0.1.7), `runnel` (0.3.9)
+- Update dependencies: `anyhow` (1.0.45), `cc` (1.0.72), `flate2` (v1.0.22), `libc` (0.2.107), `pkg-config` (0.3.22)
+- Update dependencies: `exec-target` (v0.2.4), `flood-tide-gen` (0.1.15), `rust-version-info-file` (v0.1.3)
+
+
+## [0.1.15] - 2021-09-11
+
+### Changed
+- Update `flate2` to 1.0.21
+
+
+## [0.1.14] - 2021-09-11
+
+### Added
+- Dependency: `indoc` (1.0.3)
+
+### Changed
+- Address Clippy warnings
+- Update dependencies: `anyhow` (1.0.43), `flood-tide-gen` (0.1.14), `flood-tide` (0.2.3), `memx-cdy` (0.1.6), `runnel` (0.3.8)
+- Use `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))` for `TARGET_EXE_PATH`
+- Update `exec-target` to 0.2.3
+
+
+## [0.1.13] - 2021-06-24
+
+### Added
+- Call `memx_cdy::memx_init()` for faster memory operations
+
+### Changed
+- Use `env!("CARGO_BIN_EXE_aki-xtree")` for `TARGET_EXE_PATH`
+- Update `zstd` to 0.9.0+zstd.1.5.0
 
 ### Fixed
-* bug: command option: -X rust-version-info
+- Issue with `#[cfg(feature = "debian_build")]`
 
-## [0.1.10] (2021-04-23)
-### Fixed
-* bug: build.rs
 
-## [0.1.9] (2021-04-23)
+## [0.1.12] - 2021-06-06
+
+### Changed
+- Update `zstd` to 0.8.3+zstd.1.5.0
+
+
+## [0.1.11] - 2021-06-03
+
 ### Added
-* command option: `-X`
+- Support for `debian_build` feature
 
 ### Changed
-* update depends: flood-tide-gen(0.1.12), flood-tide(0.2.1)
-* update depends: bug fix: regex(1.4.6)
-
-## [0.1.8] (2021-04-19)
-### Changed
-* update depends: flood-tide-gen(0.1.10)
-
-## [0.1.7] (2021-04-07)
-### Changed
-* update depends: flood-tide(0.2), zstd(0.7)
-* update depends: anyhow(1.0.40), flood-tide-gen(0.1.8), runnnel(0.3.6)
-
-## [0.1.6] (2021-03-22)
-### Changed
-* update depends: anyhow
-
-## [0.1.5] (2021-03-08)
-### Changed
-* update crate: runnel
-* update crate: rustc_version ("0.3")
-
-## [0.1.4] (2021-03-08)
-### Changed
-* rename file: `xtask/src/cmd.txt` to `xtask/src/aki-xtee-cmd.txt`
-
-## [0.1.3] (2021-03-07)
-### Changed
-* update crates
-
-## [0.1.2] (2021-03-03)
-### Changed
-* update crate: runnel
+- Update `flood-tide` to 0.2.2
+- Update `regex` to 1.5.4
 
 ### Fixed
-* bug: github repository name: from `aki-xtree` to `aki-xtee`
+- Issue with `-X rust-version-info` option
 
-## [0.1.1] (2021-03-03)
+
+## [0.1.10] - 2021-04-23
+
+### Fixed
+- Issue in `build.rs`
+
+
+## [0.1.9] - 2021-04-23
+
 ### Added
-* command option: `-p, --pipe-out <num>   read from pipe <num> [unimplemented]`
+- Support for `-X` command option
 
 ### Changed
-* update crate: flood-tide-gen
+- Update `flood-tide-gen` (0.1.12), `flood-tide` (0.2.1)
+- Update `regex` to 1.4.6
 
-## [0.1.0] (2021-02-28)
-* first commit
+
+## [0.1.8] - 2021-04-19
+
+### Changed
+- Update `flood-tide-gen` to 0.1.10
+
+
+## [0.1.7] - 2021-04-07
+
+### Changed
+- Update `flood-tide` to 0.2, `zstd` to 0.7
+- Update dependencies: `anyhow` (1.0.40), `flood-tide-gen` (0.1.8), `runnel` (0.3.6)
+
+
+## [0.1.6] - 2021-03-22
+
+### Changed
+- Update `anyhow` dependency
+
+
+## [0.1.5] - 2021-03-08
+
+### Changed
+- Update `runnel` dependency
+- Update `rustc_version` to 0.3
+
+
+## [0.1.4] - 2021-03-08
+
+### Changed
+- Rename `xtask/src/cmd.txt` to `xtask/src/aki-xtee-cmd.txt`
+
+
+## [0.1.3] - 2021-03-07
+
+### Changed
+- Update dependencies
+
+
+## [0.1.2] - 2021-03-03
+
+### Changed
+- Update `runnel` dependency
+
+### Fixed
+- Rename GitHub repository from `aki-xtree` to `aki-xtee`
+
+
+## [0.1.1] - 2021-03-03
+
+### Added
+- Command option: `-p, --pipe-out <num>` (unimplemented)
+
+### Changed
+- Update `flood-tide-gen` dependency
+
+
+## [0.1.0] - 2021-02-28
+
+### Added
+- Initial release
+
 
 [Unreleased]: https://github.com/aki-akaguma/aki-xtee/compare/v0.2.1..HEAD
 [0.2.1]: https://github.com/aki-akaguma/aki-xtee/compare/v0.2.0..v0.2.1
