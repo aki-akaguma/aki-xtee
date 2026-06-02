@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Organize review files into `docs/reviews/`
 
+### Fixed
+* Append mode (`-a`) now correctly creates the file if it does not exist.
+
 
 ## [0.2.1] (2026-05-20)
 ### Changed

@@ -468,24 +468,22 @@ mod test_2_file_e {
     }
     //
     #[test]
-    fn test_append_mode() {
+    fn test_append_mode_create_if_not_exists() {
         let test_out = crate::helper::TestOut::new();
-        let fnm = "append_test.txt";
+        let fnm = "new_append_file.txt";
         let target_path = test_out.target_path(fnm);
         let target_path_str = target_path.to_str().unwrap();
-        //
-        std::fs::write(target_path_str, "initial content\n").unwrap();
         //
         let oup = exec_target_with_in(
             TARGET_EXE_PATH,
             ["-a", target_path_str],
-            b"appended content\n" as &[u8],
+            b"created by append\n" as &[u8],
         );
         assert_eq!(oup.stderr, "");
         assert!(oup.status.success());
         //
         let content = std::fs::read_to_string(target_path_str).unwrap();
-        assert_eq!(content, "initial content\nappended content\n");
+        assert_eq!(content, "created by append\n");
     }
 }
 

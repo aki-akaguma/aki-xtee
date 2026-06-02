@@ -89,6 +89,7 @@ fn make_output(path_string: &str, is_append: bool) -> anyhow::Result<Box<dyn Fin
     let file = if is_append {
         File::options()
             .append(true)
+            .create(true)
             .open(path)
             .with_context(|| format!("can not open append file: {path_string}"))?
     } else {

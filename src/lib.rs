@@ -22,7 +22,7 @@ copy standard input to each <file>, and to standard output.
 automatic discovery file type: plain, gz, xz and zst.
 
 Options:
-  -a, --append <file>   append to the <file>, do not overwrite [unimplemented]
+  -a, --append <file>   append to the <file>, do not overwrite
   -p, --pipe-out <num>  write to pipe <num> [unimplemented]
 
   -H, --help        display this help and exit
