@@ -5,40 +5,40 @@ use super::Finish;
 use std::fs::File;
 use std::io::Write;
 
-pub struct XzEnc(Option<XzEncoder<File>>);
+pub struct XzEnc {
+    encoder: Option<XzEncoder<File>>,
+}
 
 impl XzEnc {
     pub fn new(file: File) -> anyhow::Result<Self> {
-        let enc = XzEncoder::new(file, 6);
-        Ok(Self(Some(enc)))
+        let encoder = XzEncoder::new(file, 6);
+        Ok(Self {
+            encoder: Some(encoder),
+        })
     }
 }
 
 impl Write for XzEnc {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.write(buf);
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.write(buf)
         } else {
-            Ok(0)
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.flush();
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.flush()
         } else {
-            Ok(())
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
 }
 
 impl Finish for XzEnc {
     fn finish(&mut self) -> anyhow::Result<()> {
-        if let Some(a) = self.0.take() {
-            a.finish()?;
+        if let Some(encoder) = self.encoder.take() {
+            encoder.finish()?;
         }
         Ok(())
     }

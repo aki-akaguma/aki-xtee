@@ -7,40 +7,40 @@ use super::Finish;
 use std::fs::File;
 use std::io::Write;
 
-pub struct GzEnc(Option<GzEncoder<File>>);
+pub struct GzEnc {
+    encoder: Option<GzEncoder<File>>,
+}
 
 impl GzEnc {
     pub fn new(file: File) -> anyhow::Result<Self> {
-        let enc = GzEncoder::new(file, Compression::new(6));
-        Ok(Self(Some(enc)))
+        let encoder = GzEncoder::new(file, Compression::new(6));
+        Ok(Self {
+            encoder: Some(encoder),
+        })
     }
 }
 
 impl Write for GzEnc {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.write(buf);
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.write(buf)
         } else {
-            Ok(0)
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.flush();
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.flush()
         } else {
-            Ok(())
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
 }
 
 impl Finish for GzEnc {
     fn finish(&mut self) -> anyhow::Result<()> {
-        if let Some(a) = self.0.take() {
-            a.finish()?;
+        if let Some(encoder) = self.encoder.take() {
+            encoder.finish()?;
         }
         Ok(())
     }

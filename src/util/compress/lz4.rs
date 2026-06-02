@@ -5,41 +5,40 @@ use super::Finish;
 use std::fs::File;
 use std::io::Write;
 
-pub struct Lz4Enc(Option<Lz4Encoder<File>>);
+pub struct Lz4Enc {
+    encoder: Option<Lz4Encoder<File>>,
+}
 
 impl Lz4Enc {
     pub fn new(file: File) -> anyhow::Result<Self> {
-        //let enc = Lz4Encoder::new(file, 3)?;
-        let enc = lz4::EncoderBuilder::new().level(3).build(file)?;
-        Ok(Self(Some(enc)))
+        let encoder = lz4::EncoderBuilder::new().level(3).build(file)?;
+        Ok(Self {
+            encoder: Some(encoder),
+        })
     }
 }
 
 impl Write for Lz4Enc {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.write(buf);
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.write(buf)
         } else {
-            Ok(0)
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.flush();
-            let _ = self.0.replace(a);
-            r
+        if let Some(ref mut encoder) = self.encoder {
+            encoder.flush()
         } else {
-            Ok(())
+            Err(std::io::Error::other("encoder is finished"))
         }
     }
 }
 
 impl Finish for Lz4Enc {
     fn finish(&mut self) -> anyhow::Result<()> {
-        if let Some(a) = self.0.take() {
-            let (_w, r) = a.finish();
+        if let Some(encoder) = self.encoder.take() {
+            let (_w, r) = encoder.finish();
             r?;
         }
         Ok(())

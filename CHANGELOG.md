@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Append mode (`-a`) now correctly creates the file if it does not exist.
+* Refactor compression wrappers for better ownership management.
 
 
 ## [0.2.1] (2026-05-20)

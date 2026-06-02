@@ -2,40 +2,41 @@ use super::Finish;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
-pub struct PlainOut(Option<BufWriter<File>>);
+pub struct PlainOut {
+    writer: BufWriter<File>,
+    finished: bool,
+}
 
 impl PlainOut {
     pub fn new(file: File) -> anyhow::Result<Self> {
-        let enc = BufWriter::new(file);
-        Ok(Self(Some(enc)))
+        let writer = BufWriter::new(file);
+        Ok(Self {
+            writer,
+            finished: false,
+        })
     }
 }
 
 impl Write for PlainOut {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.write(buf);
-            let _ = self.0.replace(a);
-            r
-        } else {
-            Ok(0)
+        if self.finished {
+            return Err(std::io::Error::other("writer is finished"));
         }
+        self.writer.write(buf)
     }
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(mut a) = self.0.take() {
-            let r = a.flush();
-            let _ = self.0.replace(a);
-            r
-        } else {
-            Ok(())
+        if self.finished {
+            return Err(std::io::Error::other("writer is finished"));
         }
+        self.writer.flush()
     }
 }
 
 impl Finish for PlainOut {
     fn finish(&mut self) -> anyhow::Result<()> {
-        if let Some(_a) = self.0.take() {
-            // nothing todo
+        if !self.finished {
+            self.writer.flush()?;
+            self.finished = true;
         }
         Ok(())
     }
