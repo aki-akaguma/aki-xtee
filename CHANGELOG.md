@@ -1,5 +1,4 @@
 # Changelog: aki-xtee
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -8,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Code review report `docs/reviews/2026-06-02_code_review.2.md`
+- Document code review report `docs/reviews/2026-06-02_code_review.2.md`
 
 ### Changed
 - Organize review files into `docs/reviews/`
 
 ### Fixed
-- Creation of file in append mode (`-a`) if it does not exist
-- Ownership management in compression wrappers
+- Create file in append mode (`-a`) if it does not exist
+- Manage ownership in compression wrappers
 
 ### Removed
 - Unimplemented `-p` (pipe-out) option
@@ -24,14 +23,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1] - 2026-05-20
 
 ### Changed
-- Update `flood-tide` to 0.2.14, `flood-tide-gen` to 0.2.2
+- Update `flood-tide` to 0.2.14
+- Update `flood-tide-gen` to 0.2.2
 - Patch `getrandom` to 0.3.4
 - Update `runnel` to 0.4.2
 
 ### Fixed
 - Typo in error message for unsupported `.xz` files
-- Clippy lint: `uninlined-format-args`
-- Clippy lint: `needless_borrow`
+- Remove `uninlined-format-args` clippy lint
+- Remove `needless_borrow` clippy lint
 
 ### Removed
 - `memx-cdy` dependency
@@ -40,16 +40,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-09-15
 
 ### Added
-- Support for `bzip2`
-- Support for `lz4`
+- Support `bzip2`
+- Support `lz4`
 - Specifications documentation in `specs/`
-- Support for `-X base_dir=dir` option
+- Support `-X base_dir=dir` option
 - Append mode via `-a file` option
 - Additional tests
 - Test case for invalid UTF-8 input
 
 ### Changed
-- Compatibility for `IntoIterator` in `execute()` arguments
+- Implement `IntoIterator` for `execute()` arguments
 - Update `runnel` to 0.4.0
 - Update `rust-version-info-file` to 0.2
 
@@ -70,10 +70,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove `cfg(has_not_matches)`
 - Update `rust-version` from 1.60.0 to 1.65.0
 - Refactor `Makefile`
-- Update dependencies: `flood-tide` (0.2.11), `flood-tide-gen` (0.1.22)
-- Update dependencies: `memx-cdy` (0.1.13), `runnel` (0.3.19)
-- Update dependencies: `exec-target` (0.2.9), `indoc` (2.0.5), `rust-version-info-file` (0.1.10)
-- Update dependencies: `zstd` (0.13.1)
+- Update `flood-tide` to 0.2.11
+- Update `flood-tide-gen` to 0.1.22
+- Update `memx-cdy` to 0.1.13
+- Update `runnel` to 0.3.19
+- Update `exec-target` to 0.2.9
+- Update `indoc` to 2.0.5
+- Update `rust-version-info-file` to 0.1.10
+- Update `zstd` to 0.13.1
 - Rename `fixtures/text10k.txt.gz` to `fixtures/text10k.text.gz`
 
 ### Fixed
@@ -97,9 +101,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Reformat `CHANGELOG.md`
 - Update `anyhow` to 1.0.68
-- Update `flood-tide` (0.2.8), `flood-tide-gen` (0.1.19)
-- Update `memx-cdy` (0.1.10), `runnel` (0.3.15)
-- Update `flate2` (1.0.25), `xz2` (0.1.7)
+- Update `flood-tide` to 0.2.8
+- Update `flood-tide-gen` to 0.1.19
+- Update `memx-cdy` to 0.1.10
+- Update `runnel` to 0.3.15
+- Update `flate2` to 1.0.25
+- Update `xz2` to 0.1.7
 - Update `zstd` to 0.12.1+zstd.1.5.2
 
 ### Fixed
@@ -123,12 +130,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Migrate to Rust 2021 edition
-- Update dependencies: `cfg-iif` (0.2.3), `flood-tide` (0.2.5), `linux-procfs` (0.3.11)
-- Update dependencies: `memx` (0.1.21), `memx-cdy` (0.1.8), `naive_opt` (0.1.18), `runnel` (0.3.11)
-- Update dependencies: `assert-text` (0.2.6), `exec-target` (v0.2.6), `flood-tide-gen` (0.1.16)
-- Update dependencies: `rust-version-info-file` (v0.1.6)
-- Update dependencies: `semver` (1.0.10)
-- Update dependencies: `flate2` (1.0.24), `lzma-sys` (0.1.19), `miniz_oxide` (0.5.3), `xz2` (0.1.7)
+- Update `cfg-iif` to 0.2.3
+- Update `flood-tide` to 0.2.5
+- Update `linux-procfs` to 0.3.11
+- Update `memx` to 0.1.21
+- Update `memx-cdy` to 0.1.8
+- Update `naive_opt` to 0.1.18
+- Update `runnel` to 0.3.11
+- Update `assert-text` to 0.2.6
+- Update `exec-target` to 0.2.6
+- Update `flood-tide-gen` to 0.1.16
+- Update `rust-version-info-file` to 0.1.6
+- Update `semver` to 1.0.10
+- Update `flate2` to 1.0.24
+- Update `lzma-sys` to 0.1.19
+- Update `miniz_oxide` to 0.5.3
+- Update `xz2` to 0.1.7
 
 
 ## [0.1.20] - 2022-05-22
@@ -140,16 +157,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.19] - 2022-05-22
 
 ### Changed
-- Update `runnel` (0.3.10), `memx` (0.1.20)
-- Update `anyhow` (1.0.57), `libc` (0.2.126), `regex` (1.5.6)
-- Update `flate2` (1.0.23), `lz4` (1.23.3), `zstd` (0.9.2+zstd.1.5.1)
-- Update dependencies: `exec-target` (v0.2.5), `rust-version-info-file` (v0.1.5)
+- Update `runnel` to 0.3.10
+- Update `memx` to 0.1.20
+- Update `anyhow` to 1.0.57
+- Update `libc` to 0.2.126
+- Update `regex` to 1.5.6
+- Update `flate2` to 1.0.23
+- Update `lz4` to 1.23.3
+- Update `zstd` to 0.9.2+zstd.1.5.1
+- Update `exec-target` to 0.2.5
+- Update `rust-version-info-file` to 0.1.5
 
 
 ## [0.1.18] - 2021-11-15
 
 ### Added
-- Additional documentation
+- Provide additional documentation
 
 
 ## [0.1.17] - 2021-11-15
@@ -161,13 +184,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.16] - 2021-11-15
 
 ### Added
-- Additional documentation
+- Provide additional documentation
 
 ### Changed
 - Set minimum supported Rust version to 1.47.0
-- Update dependencies: `flood-tide` (0.2.4), `memx` (0.1.18), `memx-cdy` (0.1.7), `runnel` (0.3.9)
-- Update dependencies: `anyhow` (1.0.45), `cc` (1.0.72), `flate2` (v1.0.22), `libc` (0.2.107), `pkg-config` (0.3.22)
-- Update dependencies: `exec-target` (v0.2.4), `flood-tide-gen` (0.1.15), `rust-version-info-file` (v0.1.3)
+- Update `flood-tide` to 0.2.4
+- Update `memx` to 0.1.18
+- Update `memx-cdy` to 0.1.7
+- Update `runnel` to 0.3.9
+- Update `anyhow` to 1.0.45
+- Update `cc` to 1.0.72
+- Update `flate2` to 1.0.22
+- Update `libc` to 0.2.107
+- Update `pkg-config` to 0.3.22
+- Update `exec-target` to 0.2.4
+- Update `flood-tide-gen` to 0.1.15
+- Update `rust-version-info-file` to 0.1.3
 
 
 ## [0.1.15] - 2021-09-11
@@ -179,11 +211,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.14] - 2021-09-11
 
 ### Added
-- Dependency: `indoc` (1.0.3)
+- Add `indoc` (1.0.3) dependency
 
 ### Changed
 - Address Clippy warnings
-- Update dependencies: `anyhow` (1.0.43), `flood-tide-gen` (0.1.14), `flood-tide` (0.2.3), `memx-cdy` (0.1.6), `runnel` (0.3.8)
+- Update `anyhow` to 1.0.43
+- Update `flood-tide-gen` to 0.1.14
+- Update `flood-tide` to 0.2.3
+- Update `memx-cdy` to 0.1.6
+- Update `runnel` to 0.3.8
 - Use `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))` for `TARGET_EXE_PATH`
 - Update `exec-target` to 0.2.3
 
@@ -198,7 +234,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `zstd` to 0.9.0+zstd.1.5.0
 
 ### Fixed
-- Issue with `#[cfg(feature = "debian_build")]`
+- Fix issue with `#[cfg(feature = "debian_build")]`
 
 
 ## [0.1.12] - 2021-06-06
@@ -210,29 +246,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.11] - 2021-06-03
 
 ### Added
-- Support for `debian_build` feature
+- Support `debian_build` feature
 
 ### Changed
 - Update `flood-tide` to 0.2.2
 - Update `regex` to 1.5.4
 
 ### Fixed
-- Issue with `-X rust-version-info` option
+- Fix issue with `-X rust-version-info` option
 
 
 ## [0.1.10] - 2021-04-23
 
 ### Fixed
-- Issue in `build.rs`
+- Fix issue in `build.rs`
 
 
 ## [0.1.9] - 2021-04-23
 
 ### Added
-- Support for `-X` command option
+- Support `-X` command option
 
 ### Changed
-- Update `flood-tide-gen` (0.1.12), `flood-tide` (0.2.1)
+- Update `flood-tide-gen` to 0.1.12
+- Update `flood-tide` to 0.2.1
 - Update `regex` to 1.4.6
 
 
@@ -245,8 +282,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.7] - 2021-04-07
 
 ### Changed
-- Update `flood-tide` to 0.2, `zstd` to 0.7
-- Update dependencies: `anyhow` (1.0.40), `flood-tide-gen` (0.1.8), `runnel` (0.3.6)
+- Update `flood-tide` to 0.2
+- Update `zstd` to 0.7
+- Update `anyhow` to 1.0.40
+- Update `flood-tide-gen` to 0.1.8
+- Update `runnel` to 0.3.6
 
 
 ## [0.1.6] - 2021-03-22
@@ -286,7 +326,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.1] - 2021-03-03
 
 ### Added
-- Command option: `-p, --pipe-out <num>` (unimplemented)
+- Add command option: `-p, --pipe-out <num>` (unimplemented)
 
 ### Changed
 - Update `flood-tide-gen` dependency
@@ -295,7 +335,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2021-02-28
 
 ### Added
-- Initial release
+- Perform initial release
 
 
 [Unreleased]: https://github.com/aki-akaguma/aki-xtee/compare/v0.2.1..HEAD
